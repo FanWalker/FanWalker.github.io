@@ -1,0 +1,1965 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>FanWalker&#39;s blog</title>
+  <subtitle>成功，唯有积累，没有奇迹</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://fanwalker.com/"/>
+  <updated>2017-09-10T14:36:09.952Z</updated>
+  <id>http://fanwalker.com/</id>
+  
+  <author>
+    <name>FanWalker</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>浅谈CORS跨域资源共享</title>
+    <link href="http://fanwalker.com/2017/09/10/%E6%B5%85%E8%B0%88CORS%E8%B7%A8%E5%9F%9F%E8%B5%84%E6%BA%90%E5%85%B1%E4%BA%AB/"/>
+    <id>http://fanwalker.com/2017/09/10/浅谈CORS跨域资源共享/</id>
+    <published>2017-09-10T14:30:18.000Z</published>
+    <updated>2017-09-10T14:36:09.952Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>AJAX(Asynchronous JavaScript And Xml) 是JavaScript执行异步网络请求</strong></p>
+<p>用户点击“Submit”按钮，表单开始提交，浏览器就会刷新页面，web的运作原理：一次HTTP请求对应一个页面<br>要让用户留在当前页面，同时发送请求，要用JavaScript实现，接收到数据后，再用JavaScript更新页面</p>
+<p>实现AJAX主要依靠XMLHttpRequest对象：</p>
+<pre><code>function success(text){
+  var textarea = document.getElementById(&apos;response-text&apos;);
+  textarea.value = text;
+}
+function fail(err){
+  var textarea = document.getElementById(&apos;response-text&apos;);
+  text.value = &apos;Error:&apos; + err;
+}
+var xhr = new XMLHttpRequest();  //创建XMLHttpRequest对象
+</code></pre><a id="more"></a>
+<p>必须在调用open之前指定onreadystatechange事件处理程序才能确保跨浏览器兼容性</p>
+<pre><code>xhr.onreadystatechange = function(){    //监测状态变化
+  if(xhr.readyState == 4){  //状态为4时代表请求完成
+    if(xhr.status === 200){   //响应已经成功返回
+      return success(xhr.responseText);
+    }else{
+      return fail(xhr.status);
+    }  
+  }
+  else{
+    console.log(&apos;HTTP请求还在继续&apos;);
+  }
+}
+xhr.open(&apos;get&apos;,url); 
+xhr.send();
+</code></pre><p>IE以及低版本IE,XMR对象是通过MSXML库中的一个ActiveX对象实现的。<br>所以在IE中可能会遇到三种不同的XHR对象：<br>MSXML2.XMLHttp、MSXML2.XMLHttp.3.0、MSXML2.XMLHttp.6.0<br>所以封装一个函数来创建XHR对象，兼容IE版本</p>
+<pre><code>function createXHR(){
+  if(typeof XMLHttpRequest != &quot;undefined&quot;){
+    return new XMLHttpRequest();
+  }else if(typeof ActiveXObject != &quot;undefined&quot;){
+    if(typeof arguments.callee.activeXString != &quot;string&quot;){
+      var versions = [&quot;MSXML2.XMLHttp.6.0&quot;, &quot;MSXML2.XMLHttp.3.0&quot;, &quot;MSXML2.XMLHttp&quot;],
+          i, len;
+      for(i=0, len=versions.length; i&lt;len; i++){
+        try{
+          new ActiveXObject(versions[i]);
+          arguments.callee.activeXString = versions[i];
+          break;
+        }catch(ex){
+          console.log(ex);
+        }
+      }
+    }
+    return new ActiveXObject(arguments.callee.activeXString);
+  }
+}
+var xhr = createXHR();
+</code></pre><h3 id="CORS-Cross-Origin-Resource-Sharing-跨域资源共享"><a href="#CORS-Cross-Origin-Resource-Sharing-跨域资源共享" class="headerlink" title="CORS(Cross-Origin Resource Sharing)跨域资源共享"></a>CORS(Cross-Origin Resource Sharing)跨域资源共享</h3><p>Ajax同信限制：跨域安全策略；<br>XHR对象只能访问与包含它的页面位于同一个域中的资源：<br>1、域名要相同（www.example.com和example.com不同），<br>2、协议要相同（http和https不同），<br>3、端口号要相同（默认是:80端口，它和:8080就不同）。<br>CORS定义了在访问跨域资源时，浏览器和服务器应该怎样沟通，CORS的思想是使用自定义的HTTP头部让浏览器与服务区进行沟通，从而决定响应是成功还是失败<br>   比如一个简单的GET或POST请求，它没有自定义的头部，而主题内容是text/plain。在发送该请求时需要给它加一个额外的头部，包含请求页面的源信息（协议、域名和端口），服务器根据该头部信息决定是否给予响应，Origin头部示例：<br><code>Origin : http://www.fanwalker.com</code><br>如果服务器接收该请求，会在Access-Control-Allow-Origin头部中回发相同的源信息。例如：<br><code>Acess-Control-Allow-Origin: http://www.fanwalker.com</code><br>如果没有这个头部或不匹配源信息，浏览器会驳回请求。这里注意请求和响应都不包含cookie信息</p>
+<h3 id="IE对CORS的实现"><a href="#IE对CORS的实现" class="headerlink" title="IE对CORS的实现"></a>IE对CORS的实现</h3><p>IE8中引入了XDR(XDomainRequest)类型，可以实现安全的跨域通信，XDR对象的使用方法与XHR对象相似：</p>
+<p>GET请求</p>
+<pre><code>var xdr = new XDomainRequest();
+xdr.onload = function(){
+      alert(xdr.responseText);    //xdr.responseText保存着响应数据
+}
+xdr.onerror = function(){       //失败后出发error事件
+      alert(&quot;an error occurred.&quot;);
+}
+xdr.timeout = 1000;     //支持timeout属性和ontimeout事件处理程序，1秒钟后超时并调用ontimeout方法
+xdr.ontimeout = function(){
+      alert(&quot;Request took too long&quot;);
+}
+xdr.open(&quot;get&quot;, &quot;http://www.fanwalker.com/page/&quot;);
+xdr.send(null);
+</code></pre><p>POST请求</p>
+<pre><code>var xdr = new XDomainRequest();
+xdr.onload = function(){
+      alert(xdr.responseText);    //xdr.responseText保存着响应数据
+}
+xdr.onerror = function(){       //失败后出发error事件
+      alert(&quot;an error occurred.&quot;);
+}
+xdr.timeout = 1000;     //支持timeout属性和ontimeout事件处理程序，1秒钟后超时并调用ontimeout方法
+xdr.ontimeout = function(){
+      alert(&quot;Request took too long&quot;);
+}
+xdr.open(&quot;post&quot;, &quot;http://www.fanwalker.com/page/&quot;);
+xdr.contentType = &quot;application/x-www-form-urlencoded&quot;:    //设置contentType属性表示发送数据的格式
+xdr.send(null);
+</code></pre><p>更多详细的介绍：<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS" target="_blank" rel="external">HTTP访问控制（CORS）</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;AJAX(Asynchronous JavaScript And Xml) 是JavaScript执行异步网络请求&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;用户点击“Submit”按钮，表单开始提交，浏览器就会刷新页面，web的运作原理：一次HTTP请求对应一个页面&lt;br&gt;要让用户留在当前页面，同时发送请求，要用JavaScript实现，接收到数据后，再用JavaScript更新页面&lt;/p&gt;
+&lt;p&gt;实现AJAX主要依靠XMLHttpRequest对象：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;function success(text){
+  var textarea = document.getElementById(&amp;apos;response-text&amp;apos;);
+  textarea.value = text;
+}
+function fail(err){
+  var textarea = document.getElementById(&amp;apos;response-text&amp;apos;);
+  text.value = &amp;apos;Error:&amp;apos; + err;
+}
+var xhr = new XMLHttpRequest();  //创建XMLHttpRequest对象
+&lt;/code&gt;&lt;/pre&gt;
+    
+    </summary>
+    
+    
+      <category term="ajax" scheme="http://fanwalker.com/tags/ajax/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JavaScript之命名函数表达式</title>
+    <link href="http://fanwalker.com/2017/08/30/JavaScript%E4%B9%8B%E5%91%BD%E5%90%8D%E5%87%BD%E6%95%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
+    <id>http://fanwalker.com/2017/08/30/JavaScript之命名函数表达式/</id>
+    <published>2017-08-30T12:03:03.000Z</published>
+    <updated>2017-09-09T15:00:25.742Z</updated>
+    
+    <content type="html"><![CDATA[<p>所谓命名函数表达式就是被赋予了名字的函数表达式，和它相对的是匿名函数，从简单的角度来看，命名函数表达式可以在调试器或性能分析程序中描述函</p>
+<p>数的名称，在调试过程中有着不小的作用，因为通常在跨浏览器开发中都会出现一些小毛病，命名函数表达式可以帮助我们解决它们。</p>
+<p>先来看一下函数表达式与函数声明以及现代调试器如何处理它们之类的内容。</p>
+<h2 id="函数表达式与函数声明"><a href="#函数表达式与函数声明" class="headerlink" title="函数表达式与函数声明"></a>函数表达式与函数声明</h2><p>通常，我们可以通过函数表达式与函数声明来创建函数对象的方法。但是具体来说什么是函数表达式、什么是函数声明呢？在ECMA规范中明确了一点，函</p>
+<p>数声明必须始终带有标志符——即函数名，而函数表达式可以省略这个标识符，如：<br><a id="more"></a></p>
+<pre><code>//函数声明
+function 函数名称(参数:可选){ 函数体 }
+
+//函数表达式
+function 函数名称（可选）(参数:可选){ 函数体 }
+</code></pre><p>但是如果函数表达式没有省略函数名，这时候函数声明与函数表达式就容易混淆。这时候ECMAScript是通过上下文来区分两者。比如，function foo(){} 是一</p>
+<p>个赋值表达式的一部分，则认为它是一个函数表达式，如果 function foo(){} 被包含在一个函数体内，或者位于程序（的最上层）中，则将它作为一个函数声</p>
+<p>明来解析：</p>
+<pre><code>function foo(){}; // 声明，因为它是程序的一部分
+
+var bar = function foo(){}; // 表达式，因为它是赋值表达式（AssignmentExpression）的一部分
+
+new function bar(){}; // 表达式，因为它是New表达式（NewExpression）的一部分
+
+(function(){
+   function bar(){}; // 声明，因为它是函数体（FunctionBody）的一部分
+})();
+</code></pre><p>还有一种就是被包含在一对圆括号中的函数—— (function foo(){})。将这种形式看成表达式同样是因为上下文的关系：’(‘ 和 ‘)’构成一个分组操作符，而分组</p>
+<p>操作符只能包含表达式：</p>
+<pre><code>function foo(){}; // 函数声明
+
+(function foo(){}); // 函数表达式：注意它被包含在分组操作符中
+
+try {
+  (var x = 5); // 分组操作符只能包含表达式，不能包含语句（这里的var就是语句）
+} catch(err) {
+  // SyntaxError
+}
+</code></pre><p>在使用eval对JSON进行执行的时候，JSON字符串通常被包含在一个圆括号里：eval(‘(‘ + json + ‘)’)，这样做的原因就是因为分组操作符，也就是这对括号，</p>
+<p>‘(‘ 和 ‘)’会让解析器强制将JSON的花括号解析成表达式而不是代码块。</p>
+<pre><code>try {
+  { &quot;x&quot;: 5 }; // &quot;{&quot; 和 &quot;}&quot; 会被解析成代码块
+} catch(err) {
+  // SyntaxError
+}
+
+({ &quot;x&quot;: 5 }); // 分组操作符强制将&quot;{&quot; 和 &quot;}&quot;作为对象字面量来解析
+</code></pre><p>声明和表达式的行为存在着十分微妙而又十分重要的差别。首先，函数声明会在任何表达式被解析和求值之前先行被解析和求值。即使声明位于源代码中的</p>
+<p>最后一行，它也会先于同一作用域中位于最前面的表达式被求值。还是看个例子更容易理解。在下面这个例子中，函数 fn 是在 alert 后面声明的。但是，在 </p>
+<p>alert 执行的时候，fn已经有定义了：</p>
+<pre><code>alert(fn());
+
+function fn() {
+  return &apos;Hello world!&apos;;
+}
+</code></pre><p><strong>函数声明有一个重要的注意事项</strong>：就是千万不要在条件语句中使用函数声明，而要使用函数表达式。因为通过条件语句控制函数声明的行为并未标准化，</p>
+<p>因此不同环境下可能会得到不同的结果。</p>
+<pre><code>// 千万不要这样做！
+// 有的浏览器会把foo声明为返回first的那个函数
+// 而有的浏览器则会让foo返回second
+
+if (true) {
+  function foo() {
+    return &apos;first&apos;;
+  }
+}
+else {
+  function foo() {
+    return &apos;second&apos;;
+  }
+}
+foo();
+
+// 这种情况下要使用函数表达式：
+var foo;
+if (true) {
+  foo = function() {
+    return &apos;first&apos;;
+  };
+}
+else {
+  foo = function() {
+    return &apos;second&apos;;
+  };
+}
+foo();
+</code></pre><p>函数声明的实际规则如下：</p>
+<p>FunctionDeclaration（函数声明）只能出现在Program（程序）或FunctionBody（函数体）内。</p>
+<p>从句法上讲，它们 不能出现在Block（块）（{ … }）中，例如不能出现在 if、while 或 for 语句中。因为 Block（块） 中只能包含Statement（语句）， 而不能包含FunctionDeclaration（函数声明）这样的SourceElement（源元素）。</p>
+<p>另一方面，唯一可能让Expression（表达式）出现在Block（块）中情形，就是让它作为ExpressionStatement（表达式语句）的一部分。但是，规范明确规定了ExpressionStatement（表达式语句）不能以关键字function开头。而这实际上就是说，FunctionExpression（函数表达式）同样也不能出现在Statement（语句）或Block（块）中（别忘了Block（块）就是由Statement（语句）构成的）。</p>
+<h2 id="命名函数表达式"><a href="#命名函数表达式" class="headerlink" title="命名函数表达式"></a>命名函数表达式</h2><p>函数表达式实际上还是很常见的。Web开发中有一个常用的模式，即基于对某种特性的测试来“伪装”函数定义，从而实现性能最优化。由于这种伪装通常都</p>
+<p>出现在相同的作用域中，因此基本上一定要使用函数表达式。毕竟，如前所述，不应该根据条件来执行函数声明：</p>
+<pre><code>var contains = (function() {
+  var docEl = document.documentElement;
+
+  if (typeof docEl.compareDocumentPosition != &apos;undefined&apos;) {
+    return function(el, b) {
+      return (el.compareDocumentPosition(b) &amp; 16) !== 0;
+    }
+  }
+  else if (typeof docEl.contains != &apos;undefined&apos;) {
+    return function(el, b) {
+      return el !== b &amp;&amp; el.contains(b);
+    }
+  }
+  return function(el, b) {
+    if (el === b) return false;
+    while (el != b &amp;&amp; (b = b.parentNode) != null);
+    return el === b;
+  }
+})();
+</code></pre><p>提到命名函数表达式，很显然，指的就是有名字（技术上称为标识符）的函数表达式。在最前面的例子中，var bar = function foo(){};实际上就是一个以foo</p>
+<p>作为函数名字的函数表达式。对此，有一个细节特别重要，请大家一定要记住，即这个名字只在新定义的函数的作用域中有效——规范要求标识符不能在外</p>
+<p>围的作用域中有效：</p>
+<pre><code>var f = function foo(){
+  return typeof foo; // foo只在内部作用域中有效
+};
+// foo在“外部”永远是不可见的
+typeof foo; // &quot;undefined&quot;
+f(); // &quot;function&quot;
+</code></pre><p>有名字的函数可以让调试过程更加方便。在调试应用程序时，如果调用栈中的项都有各自描述性的名字，那么调试过程带给人的就是另一种完全不同的感</p>
+<p>受。</p>
+<h2 id="调试器中的函数名"><a href="#调试器中的函数名" class="headerlink" title="调试器中的函数名"></a>调试器中的函数名</h2><p>在函数有相应标识符的情况下，调试器会将该标识符作为函数的名字显示在调用栈中。有的调试器（例如Firebug）甚至会为匿名函数起个名字并显示出来，</p>
+<p>让它们与那些引用函数的变量具有相同的角色。可遗憾的是，这些调试器通常只使用简单的解析规则，而依据简单的解析规则提取出来的“名字”有时候没有</p>
+<p>多大价值，甚至会得到错误结果。</p>
+<p>下面我们来看一个简单的例子：</p>
+<pre><code>function foo(){
+  return bar();
+}
+function bar(){
+  return baz();
+}
+function baz(){
+  debugger;
+}
+foo();
+
+// 这里使用函数声明定义了3个函数
+// 当调试器停止在debugger语句时，
+// Firgbug的调用栈看起来非常清晰：
+baz
+bar
+foo
+expr_test.html()
+</code></pre><p>我们可以清晰地知道foo调用了bar，而后者接着又调用了baz（而foo本身又在expr_test.html文档的全局作用域中被调用）。但真正值得称道的，则是</p>
+<p>Firebug会在我们使用匿名表达式的情况下，替我们解析函数的“名字”：</p>
+<pre><code>function foo(){
+  return bar();
+}
+var bar = function(){
+  return baz();
+}
+function baz(){
+  debugger;
+}
+foo();
+
+// 调用栈：
+baz
+bar()
+foo
+expr_test.html()
+</code></pre><p>相反，不那么令人满意的情况是，当函数表达式复杂一些时（现实中差不多总是如此），调试器再如何尽力也不会起多大的作用。结果，我们只能在调用栈中</p>
+<p>显示函数名字的位置上赫然看到一个问号：</p>
+<pre><code>function foo(){
+  return bar();
+}
+var bar = (function(){
+  if (window.addEventListener) {
+    return function(){
+      return baz();
+    }
+  }
+  else if (window.attachEvent) {
+    return function() {
+      return baz();
+    }
+  }
+})();
+function baz(){
+  debugger;
+}
+foo();
+
+// 调用栈：
+baz
+(?)()
+foo
+expr_test.html()
+</code></pre><p>此外，当把一个函数赋值给多个变量时，还会出现一个令人困惑的问题：</p>
+<pre><code>function foo(){
+  return baz();
+}
+var bar = function(){
+  debugger;
+};
+var baz = bar;
+bar = function() { 
+  alert(&apos;spoofed&apos;);
+}
+foo();
+
+// 调用栈：
+bar()
+foo
+expr_test.html()
+</code></pre><p>可见，调用栈中显示的是foo调用了bar。但实际情况显然并非如此。之所以会造成这种困惑，完全是因为baz与另一个函数——包含代码alert(‘spoofed’);的函</p>
+<p>数——“交换了”引用所致。实事求是地说，这种解析方式在简单的情况下固然好，但对于不那么简单的大多数情况而言就没有什么用处了。</p>
+<p>归根结底，只有命名函数表达式才是产生可靠的栈调用信息的唯一途径。下面我们有意使用命名函数表达式来重写前面的例子。请大家注意，从自执行包装</p>
+<p>块中返回的两个函数都被命名为了bar：</p>
+<pre><code>function foo(){
+  return bar();
+}
+var bar = (function(){
+  if (window.addEventListener) {
+    return function bar(){
+      return baz();
+    }
+  }
+  else if (window.attachEvent) {
+    return function bar() {
+      return baz();
+    }
+  }
+})();
+function baz(){
+  debugger;
+}
+foo();
+
+// 这样，我们就又可以看到清晰的调用栈信息了！
+baz
+bar
+foo
+expr_test.html()
+</code></pre><p>OK，我们又学到了一招。</p>
+<p>参考文章：<a href="http://www.jb51.net/onlineread/named-function-expressions-demystified/" target="_blank" rel="external">命名函数表达式探秘</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;所谓命名函数表达式就是被赋予了名字的函数表达式，和它相对的是匿名函数，从简单的角度来看，命名函数表达式可以在调试器或性能分析程序中描述函&lt;/p&gt;
+&lt;p&gt;数的名称，在调试过程中有着不小的作用，因为通常在跨浏览器开发中都会出现一些小毛病，命名函数表达式可以帮助我们解决它们。&lt;/p&gt;
+&lt;p&gt;先来看一下函数表达式与函数声明以及现代调试器如何处理它们之类的内容。&lt;/p&gt;
+&lt;h2 id=&quot;函数表达式与函数声明&quot;&gt;&lt;a href=&quot;#函数表达式与函数声明&quot; class=&quot;headerlink&quot; title=&quot;函数表达式与函数声明&quot;&gt;&lt;/a&gt;函数表达式与函数声明&lt;/h2&gt;&lt;p&gt;通常，我们可以通过函数表达式与函数声明来创建函数对象的方法。但是具体来说什么是函数表达式、什么是函数声明呢？在ECMA规范中明确了一点，函&lt;/p&gt;
+&lt;p&gt;数声明必须始终带有标志符——即函数名，而函数表达式可以省略这个标识符，如：&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="JavaScript" scheme="http://fanwalker.com/tags/JavaScript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JavaScript之原型和原型链</title>
+    <link href="http://fanwalker.com/2017/08/25/JavaScript%E4%B9%8B%E5%8E%9F%E5%9E%8B%E5%92%8C%E5%8E%9F%E5%9E%8B%E9%93%BE/"/>
+    <id>http://fanwalker.com/2017/08/25/JavaScript之原型和原型链/</id>
+    <published>2017-08-25T13:23:51.000Z</published>
+    <updated>2017-09-09T15:00:25.731Z</updated>
+    
+    <content type="html"><![CDATA[<p>JavaScript不包含传统的类继承模型，使用的是prototypal模型即原型模型，虽然这经常被当作是 JavaScript 的缺点被提及，其实基于原型的继承模型比传统</p>
+<p>的类继承还要强大。实现传统的类继承模型是很简单，但是实现 JavaScript 中的原型继承则要困难的多。</p>
+<h2 id="原型"><a href="#原型" class="headerlink" title="原型"></a>原型</h2><p>先来了解什么是原型（prototype）：javascript中的每个对象都有prototype属性，Javascript中对象的prototype属性的解释是：返回对象类型原型的引用。</p>
+<p>如：<br><a id="more"></a></p>
+<pre><code>A.prototype = new B();
+</code></pre><p>理解prototype不应把它和继承混淆。A的prototype为B的一个实例，可以理解A将B中的方法和属性全部克隆了一遍。A能使用B的方法和属性。这里强调的是</p>
+<p>克隆而不是继承。可以出现这种情况：A的prototype是B的实例，同时B的prototype也是A的实例。简单说了一下原型的概念，接下来看一下原型是怎么应用</p>
+<p>的。一开始学JavaScript的时候，一般会如下面一样写代码：</p>
+<pre><code>var decimalDigits = 2,
+    tax = 5;
+
+function add(x, y) {
+    return x + y;
+}
+
+function subtract(x, y) {
+    return x - y;
+}
+
+//alert(add(1, 3));
+</code></pre><p>通过执行各个function来得到结果，学习了原型之后，我们可以使用如下方式来美化一下代码：</p>
+<h3 id="原型使用方式1："><a href="#原型使用方式1：" class="headerlink" title="原型使用方式1："></a>原型使用方式1：</h3><p>在使用原型之前，我们需要先将代码做一下小修改：</p>
+<pre><code>var Calculator = function (decimalDigits, tax) {
+    this.decimalDigits = decimalDigits;
+    this.tax = tax;
+};
+</code></pre><p>然后，通过给Calculator对象的prototype属性赋值对象字面量来设定Calculator对象的原型</p>
+<pre><code>Calculator.prototype = {
+    add: function (x, y) {
+        return x + y;
+    },
+
+    subtract: function (x, y) {
+        return x - y;
+    }
+};
+//alert((new Calculator()).add(1, 3));
+</code></pre><p>这样，我们就可以new Calculator对象以后，就可以调用add方法来计算结果了。</p>
+<h3 id="原型使用方式2"><a href="#原型使用方式2" class="headerlink" title="原型使用方式2"></a>原型使用方式2</h3><p>第二种方式是，在赋值原型prototype的时候使用function立即执行的表达式来赋值，即如下格式：</p>
+<pre><code>Calculator.prototype = function () { } ();
+</code></pre><p>它可以封装私有的function，通过return的形式暴露出简单的使用名称，以达到public/private的效果，修改后的代码如下：</p>
+<pre><code>Calculator.prototype = function () {
+    add = function (x, y) {
+        return x + y;
+    },
+
+    subtract = function (x, y) {
+        return x - y;
+    }
+    return {
+        add: add,
+        subtract: subtract
+    }
+} ();
+
+//alert((new Calculator()).add(11, 3));
+</code></pre><p>同样的方式，我们可以new Calculator对象以后调用add方法来计算结果了。</p>
+<h3 id="分步声明："><a href="#分步声明：" class="headerlink" title="分步声明："></a>分步声明：</h3><p>上述使用原型的时候，有一个限制就是一次性设置了原型对象，我们再来说一下如何分开设置原型的每个属性吧。</p>
+<pre><code>var BaseCalculator = function () {
+    //为每个实例都声明一个小数位数
+    this.decimalDigits = 2;
+};
+
+//使用原型给BaseCalculator扩展2个对象方法
+BaseCalculator.prototype.add = function (x, y) {
+    return x + y;
+};
+
+BaseCalculator.prototype.subtract = function (x, y) {
+    return x - y;
+};
+</code></pre><p>首先，声明了一个BaseCalculator对象，构造函数里会初始化一个小数位数的属性decimalDigits，然后通过原型属性设置2个function，分别是add(x,y)和</p>
+<p>subtract(x,y)，当然你也可以使用前面提到的2种方式的任何一种，我们的主要目的是看如何将BaseCalculator对象设置到真正的Calculator的原型上。</p>
+<p>创建完上述代码以后，我们来开始：</p>
+<pre><code>var Calculator = function () {
+
+    //为每个实例都声明一个税收数字
+    this.tax = 5;
+};
+
+Calculator.prototype = new BaseCalculator();
+</code></pre><p>我们可以看到Calculator的原型是指向到BaseCalculator的一个实例上，目的是让Calculator集成它的add(x,y)和subtract(x,y)这2个function，还有一点要说的</p>
+<p>是，由于它的原型是BaseCalculator的一个实例，所以不管你创建多少个Calculator对象实例，他们的原型指向的都是同一个实例。</p>
+<pre><code>var calc = new Calculator();
+alert(calc.add(1, 1));
+
+//BaseCalculator 里声明的decimalDigits属性，在 Calculator里是可以访问到的
+alert(calc.decimalDigits); 
+</code></pre><p>上面的代码，运行以后，我们可以看到因为Calculator的原型是指向BaseCalculator的实例上的，所以可以访问他的decimalDigits属性值，那如果我不想让</p>
+<p>Calculator访问BaseCalculator的构造函数里声明的属性值，那怎么办呢？这么办：</p>
+<pre><code>var Calculator = function () {
+    this.tax= 5;
+};
+
+Calculator.prototype = BaseCalculator.prototype;
+</code></pre><p>通过将BaseCalculator的原型赋给Calculator的原型，这样你在Calculator的实例上就访问不到那个decimalDigits值了，如果运行上面的代码 </p>
+<p><code>alert(calc.decimalDigits)</code>，那将会提升出错。</p>
+<h3 id="重写原型"><a href="#重写原型" class="headerlink" title="重写原型"></a>重写原型</h3><p>在使用第三方JS类库的时候，往往有时候他们定义的原型方法是不能满足我们的需要，但是又离不开这个类库，所以这时候我们就需要重写他们的原型中的</p>
+<p>一个或者多个属性或function，我们可以通过向Calculator的原型上继续声明同样的add代码来达到覆盖重写前面的add功能，代码如下：</p>
+<pre><code>//覆盖前面Calculator的add() function 
+Calculator.prototype.add = function (x, y) {
+    return x + y + this.tax;
+};
+
+var calc = new Calculator();
+alert(calc.add(1, 1));
+</code></pre><p>这样，我们计算得出的结果就比原来多出了一个tax的值，但是有一点需要注意：那就是重写的代码需要放在最后，这样才能覆盖前面的代码。</p>
+<h2 id="原型链"><a href="#原型链" class="headerlink" title="原型链"></a>原型链</h2><p>在介绍原型链之前，我们先看一段代码：</p>
+<pre><code>function Foo() {
+    this.value = 42;
+}
+Foo.prototype = {
+    method: function() {}
+};
+
+function Bar() {}
+
+// 设置Bar的prototype属性为Foo的实例对象
+Bar.prototype = new Foo();
+Bar.prototype.foo = &apos;Hello World&apos;;
+
+// 修正Bar.prototype.constructor为Bar本身
+Bar.prototype.constructor = Bar;
+
+var test = new Bar() // 创建Bar的一个新实例
+
+// 原型链
+test [Bar的实例]
+    Bar.prototype [Foo的实例] 
+        { foo: &apos;Hello World&apos; }
+        Foo.prototype
+            {method: ...};
+            Object.prototype
+                {toString: ... /* etc. */};
+</code></pre><p>上面的例子中，test 对象从 Bar.prototype 和 Foo.prototype 继承下来；因此，它能访问 Foo 的原型方法 method。同时，它也能够访问那个定义在Bar原型</p>
+<p>上的 Foo 实例属性 value。需要注意的是 new Bar() 不会创造出一个新的 Foo 实例，而是重复使用它原型上的那个实例；因此，所有的 Bar 实例都会共享相</p>
+<p>同的 value 属性。</p>
+<h3 id="属性查找"><a href="#属性查找" class="headerlink" title="属性查找"></a>属性查找</h3><p>当查找一个对象的属性时，JavaScript 会向上遍历原型链，直到找到给定名称的属性为止，到查找到达原型链的顶部——也就是 Object.prototype ， 但是仍</p>
+<p>然没有找到指定的属性，就会返回 undefined，我们来看一个例子：</p>
+<pre><code>function foo() {
+    this.add = function (x, y) {
+        return x + y;
+    }
+}
+
+foo.prototype.add = function (x, y) {
+    return x + y + 10;
+}
+
+Object.prototype.subtract = function (x, y) {
+    return x - y;
+}
+
+var f = new foo();
+alert(f.add(1, 2)); //结果是3，而不是13
+alert(f.subtract(1, 2)); //结果是-1
+</code></pre><p>通过代码运行，我们发现subtract是安装我们所说的向上查找来得到结果的，但是add方式有点小不同，这也是我想强调的，就是属性在查找的时候是先查找</p>
+<p>自身的属性，如果没有再查找原型，再没有，再往上走，一直插到Object的原型上，所以在某种层面上说，用 for in语句遍历属性的时候，效率也是个问题。</p>
+<h3 id="hasOwnProperty函数："><a href="#hasOwnProperty函数：" class="headerlink" title="hasOwnProperty函数："></a>hasOwnProperty函数：</h3><p>hasOwnProperty是Object.prototype的一个方法，它能判断一个对象是否包含自定义属性而不是原型链上的属性，因为hasOwnProperty 是 JavaScript 中唯</p>
+<p>一 一个处理属性但是不查找原型链的函数。</p>
+<pre><code>// 修改Object.prototype
+Object.prototype.bar = 1; 
+var foo = {goo: undefined};
+
+foo.bar; // 1
+&apos;bar&apos; in foo; // true
+
+foo.hasOwnProperty(&apos;bar&apos;); // false
+foo.hasOwnProperty(&apos;goo&apos;); // true
+</code></pre><p>只有 hasOwnProperty 可以给出正确和期望的结果，这在遍历对象的属性时会很有用。 没有其它方法可以用来排除原型链上的属性，通过hasOwnProperty</p>
+<p>可以找到定义在对象自身上的属性。但有个恶心的地方是：JavaScript 不会保护 hasOwnProperty 被非法占用，因此如果一个对象碰巧存在这个属</p>
+<p>性，就需要使用外部的 hasOwnProperty 函数来获取正确的结果。</p>
+<pre><code>var foo = {
+    hasOwnProperty: function() {    //hasOwnProperty被非法占用
+        return false;
+    },
+    bar: &apos;Here be dragons&apos;
+};
+
+foo.hasOwnProperty(&apos;bar&apos;); // 总是返回 false
+
+// 使用{}对象的 hasOwnProperty，并将其上下为设置为foo
+{}.hasOwnProperty.call(foo, &apos;bar&apos;); // true
+</code></pre><p>当检查对象上某个属性是否存在时，hasOwnProperty 是唯一可用的方法。同时在使用 for in loop 遍历对象时，推荐总是使用 hasOwnProperty 方法，这将</p>
+<p>会避免原型对象扩展带来的干扰，我们来看一下例子：</p>
+<pre><code>// 修改 Object.prototype
+Object.prototype.bar = 1;
+
+var foo = {moo: 2};
+for(var i in foo) {
+    console.log(i); // 输出两个属性：bar 和 moo
+}
+</code></pre><p>我们没办法改变for in语句的行为，所以想过滤结果就只能使用hasOwnProperty 方法，代码如下：</p>
+<pre><code>// foo 变量是上例中的
+for(var i in foo) {
+    if (foo.hasOwnProperty(i)) {
+        console.log(i);
+    }
+}
+</code></pre><p>这个版本的代码是唯一正确的写法。由于我们使用了 hasOwnProperty，所以这次只输出 moo。如果不使用hasOwnProperty，则这段代码在原生对象原型</p>
+<p>（比如 Object.prototype）被扩展时可能会出错。</p>
+<p><strong>总结：</strong>推荐使用 hasOwnProperty，不要对代码运行的环境做任何假设，不要假设原生对象是否已经被扩展了。</p>
+<h4 id="参考内容："><a href="#参考内容：" class="headerlink" title="参考内容："></a>参考内容：</h4><p><a href="http://bonsaiden.github.com/JavaScript-Garden/zh/" target="_blank" rel="external">http://bonsaiden.github.com/JavaScript-Garden/zh/</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;JavaScript不包含传统的类继承模型，使用的是prototypal模型即原型模型，虽然这经常被当作是 JavaScript 的缺点被提及，其实基于原型的继承模型比传统&lt;/p&gt;
+&lt;p&gt;的类继承还要强大。实现传统的类继承模型是很简单，但是实现 JavaScript 中的原型继承则要困难的多。&lt;/p&gt;
+&lt;h2 id=&quot;原型&quot;&gt;&lt;a href=&quot;#原型&quot; class=&quot;headerlink&quot; title=&quot;原型&quot;&gt;&lt;/a&gt;原型&lt;/h2&gt;&lt;p&gt;先来了解什么是原型（prototype）：javascript中的每个对象都有prototype属性，Javascript中对象的prototype属性的解释是：返回对象类型原型的引用。&lt;/p&gt;
+&lt;p&gt;如：&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="JavaScript" scheme="http://fanwalker.com/tags/JavaScript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JavaScript中的this</title>
+    <link href="http://fanwalker.com/2017/08/22/JavaScript%E4%B8%AD%E7%9A%84this/"/>
+    <id>http://fanwalker.com/2017/08/22/JavaScript中的this/</id>
+    <published>2017-08-22T07:04:08.000Z</published>
+    <updated>2017-09-09T15:00:25.721Z</updated>
+    
+    <content type="html"><![CDATA[<p>原文出自：<a href="https://segmentfault.com/a/1190000002640298#articleHeader3" target="_blank" rel="external">JavaScript中的this陷阱的最全收集–没有之一</a></p>
+<p>个人觉得，如果需要掌握一门语言，掌握它的API只是学了皮毛，理解这门语言的精髓才是重点，提及JavaScript的精髓，<strong>this</strong>、<strong>闭包</strong>、<strong>作用域链</strong>、<strong>函数</strong>是当之无愧的。</p>
+<p>JavaScript中很多时候会用到this，下面详细介绍每一种情况。在这里我想首先介绍一下宿主环境这个概念。一门语<br>言在运行的时候，需要一个环境，叫做宿主环境。对于JavaScript，宿主环境最常见的是web浏览器，浏览器提供了<a id="more"></a><br>一个JavaScript运行的环境，这个环境里面，需要提供一些接口，好让JavaScript引擎能够和宿主环境对接。<br>JavaScript引擎才是真正执行JavaScript代码的地方，常见的引擎有V8(目前最快JavaScript引擎、Google生<br>产)、JavaScript core。JavaScript引擎主要做了下面几件事情：</p>
+<pre><code>一套与宿主环境相联系的规则;
+JavaScript引擎内核（基本语法规范、逻辑、命令和算法);
+一组内置对象和API;
+其他约定
+</code></pre><h3 id="global-this"><a href="#global-this" class="headerlink" title="global this"></a>global this</h3><p>在浏览器里，在全局范围内，this等价于window对象。</p>
+<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
+    console.log(this === window); //true
+&lt;/script&gt;
+</code></pre><p>在浏览器里，在全局范围内，用var声明一个变量和给this或者window添加属性是等价的</p>
+<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
+    var foo = &quot;bar&quot;;
+    console.log(this.foo); //logs &quot;bar&quot;
+    console.log(window.foo); //logs &quot;bar&quot;
+&lt;/script&gt;
+</code></pre><p>如果你在声明一个变量的时候没有使用var或者let(ECMAScript 6),你就是在给全局的this添加或者改变属性值。</p>
+<pre><code> &lt;script type=&quot;text/javascript&quot;&gt;
+     foo = &quot;bar&quot;;
+
+     function testThis() {
+       foo = &quot;foo&quot;;
+     }
+
+     console.log(this.foo); //logs &quot;bar&quot;
+     testThis();
+     console.log(this.foo); //logs &quot;foo&quot;
+&lt;/script&gt;
+</code></pre><p>在node环境里，如果使用REPL(Read-Eval-Print Loop，简称REPL:读取-求值-输出,是一个简单的，交互式的编程环境)来执行程序,this并不是最高级的命名空间，最高级的是global.</p>
+<pre><code>&gt; this
+{ ArrayBuffer: [Function: ArrayBuffer],
+  Int8Array: { [Function: Int8Array] BYTES_PER_ELEMENT: 1 },
+  Uint8Array: { [Function: Uint8Array] BYTES_PER_ELEMENT: 1 },
+  ...
+&gt; global === this
+true
+</code></pre><p><img src="http://i.imgur.com/7ej2SHo.png" alt=""><br><img src="http://i.imgur.com/OQNwaVx.png" alt=""></p>
+<p>在node环境里，如果执行一个js脚本，在全局范围内，this以一个空对象开始作为最高级的命名空间，这个时候，它和global不是等价的。</p>
+<pre><code>test.js脚本内容：
+
+console.log(this);
+console.log(this === global);
+
+REPL运行脚本：
+
+$ node test.js
+{}
+false
+</code></pre><p>在node环境里，在全局范围内，如果你用REPL执行一个脚本文件，用var声明一个变量并不会和在浏览器里面一样将这个变量添加给this。</p>
+<pre><code>test.js:
+
+var foo = &quot;bar&quot;;
+console.log(this.foo);
+
+$ node test.js
+undefined
+</code></pre><p>但是如果你不是用REPL执行脚本文件，而是直接执行代码，结果和在浏览器里面是一样的(神坑)</p>
+<pre><code>&gt; var foo = &quot;bar&quot;;
+&gt; this.foo
+bar
+&gt; global.foo
+bar
+</code></pre><p>在node环境里，用REPL运行脚本文件的时候，如果在声明变量的时候没有使用var或者let，这个变量会自动添加到global对象，但是不会自动添加给this对象。如果是直接执行代码，则会同时添加给global和this</p>
+<pre><code>test.js
+
+foo = &quot;bar&quot;;
+console.log(this.foo);
+console.log(global.foo);
+
+$ node test.js
+undefined
+bar
+</code></pre><p>上面的八种情况总结起来就是：在浏览器里面this是老大，它等价于window对象，如果你声明一些全局变量(不管在任何地方)，这些变量都会作为this的属性。在node里面，有两种执行JavaScript代码的方式，一种是直接执行写好的JavaScript文件，另外一种是直接在里面执行一行行代码。对于直接运行一行行JavaScript代码的方式，global才是老大，this和它是等价的。在这种情况下，和浏览器比较相似，也就是声明一些全局变量会自动添加给老大global，顺带也会添加给this。但是在node里面直接脚本文件就不一样了，你声明的全局变量不会自动添加到this，但是会添加到global对象。所以相同点是，在全局范围内，全局变量终究是属于老大的。</p>
+<h3 id="function-this"><a href="#function-this" class="headerlink" title="function this"></a>function this</h3><p>无论是在浏览器环境还是node环境， 除了在DOM事件处理程序里或者给出了thisArg(接下来会讲到)外，如果不是用new调用，在函数里面使用this都是指代全局范围的this。</p>
+<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
+  foo = &quot;bar&quot;;
+  function testThis() {
+    this.foo = &quot;foo&quot;;
+  }
+  console.log(this.foo); //logs &quot;bar&quot;
+  testThis();
+  console.log(this.foo); //logs &quot;foo&quot;
+&lt;/script&gt;
+</code></pre><!-- -->
+<pre><code>test.js
+
+foo = &quot;bar&quot;;
+function testThis () {
+  this.foo = &quot;foo&quot;;
+}
+console.log(global.foo);
+testThis();
+console.log(global.foo);
+
+$ node test.js
+bar
+foo
+</code></pre><p>除非你使用严格模式，这时候this就会变成undefined。</p>
+<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
+     foo = &quot;bar&quot;;
+
+     function testThis() {
+       &quot;use strict&quot;;
+       this.foo = &quot;foo&quot;;
+     }
+
+     console.log(this.foo); //logs &quot;bar&quot;
+     testThis();  //Uncaught TypeError: Cannot set property &apos;foo&apos; of undefined 
+ &lt;/script&gt;
+</code></pre><p>如果你在调用函数的时候在前面使用了new，this就会变成一个新的值，和global的this脱离干系。</p>
+<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
+    foo = &quot;bar&quot;;
+
+    function testThis() {
+      this.foo = &quot;foo&quot;;
+    }
+
+    console.log(this.foo); //logs &quot;bar&quot;
+    new testThis();
+    console.log(this.foo); //logs &quot;bar&quot;
+
+    console.log(new testThis().foo); //logs &quot;foo&quot;
+&lt;/script&gt;
+</code></pre><p>我更喜欢把新的值称作一个实例。</p>
+<blockquote>
+<p>函数里面的this其实相对比较好理解，如果我们在一个函数里面使用this，需要注意的就是我们调用函数的方式，如果是正常的方式调用函数，this指代全局的this，如果我们加一个new，这个函数就变成了一个构造函数，我们就创建了一个实例，this指代这个实例，这个和其他面向对象的语言很像。另外，写JavaScript很常做的一件事就是绑定事件处理程序，也就是诸如button.addEventListener(‘click’, fn, false)之类的，如果在fn里面需要使用this，this指代事件处理程序对应的对象，也就是button。</p>
+</blockquote>
+<h3 id="prototype-this"><a href="#prototype-this" class="headerlink" title="prototype this"></a>prototype this</h3><p>你创建的每一个函数都是函数对象。它们会自动获得一个特殊的属性prototype，你可以给这个属性赋值。当你用new的方式调用一个函数的时候，你就能通过this访问你给prototype赋的值了。</p>
+<pre><code>function Thing() {
+      console.log(this.foo);
+}
+
+Thing.prototype.foo = &quot;bar&quot;;
+
+var thing = new Thing(); //logs &quot;bar&quot;
+console.log(thing.foo);  //logs &quot;bar&quot;
+</code></pre><p>当你使用new为你的函数创建多个实例的时候，这些实例会共享给你prototype设定的值。对于下面的例子，当你调用this.foo的时候，都会返回相同的值，除非你在某个实例里面重写了自己的this.foo</p>
+<pre><code>function Thing() {
+}
+Thing.prototype.foo = &quot;bar&quot;;
+Thing.prototype.logFoo = function () {
+    console.log(this.foo);
+}
+Thing.prototype.setFoo = function (newFoo) {
+    this.foo = newFoo;
+}
+
+var thing1 = new Thing();
+var thing2 = new Thing();
+
+thing1.logFoo(); //logs &quot;bar&quot;
+thing2.logFoo(); //logs &quot;bar&quot;
+
+thing1.setFoo(&quot;foo&quot;);
+thing1.logFoo(); //logs &quot;foo&quot;;
+thing2.logFoo(); //logs &quot;bar&quot;;
+
+thing2.foo = &quot;foobar&quot;;
+thing1.logFoo(); //logs &quot;foo&quot;;
+thing2.logFoo(); //logs &quot;foobar&quot;;
+</code></pre><p>实例里面的this是一个特殊的对象。你可以把this想成一种获取prototype的值的一种方式。当你在一个实例里面直接给this添加属性的时候，会隐藏prototype中与之同名的属性。如果你想访问prototype中的这个属性值而不是你自己设定的属性值，你可以通过在实例里面删除你自己添加的属性的方式来实现。</p>
+<pre><code>function Thing() {
+}
+Thing.prototype.foo = &quot;bar&quot;;
+Thing.prototype.logFoo = function () {
+    console.log(this.foo);
+}
+Thing.prototype.setFoo = function (newFoo) {
+    this.foo = newFoo;
+}
+Thing.prototype.deleteFoo = function () {
+    delete this.foo;
+}
+var thing = new Thing();
+thing.setFoo(&quot;foo&quot;);
+thing.logFoo(); //logs &quot;foo&quot;;
+thing.deleteFoo();
+thing.logFoo(); //logs &quot;bar&quot;;
+thing.foo = &quot;foobar&quot;;
+thing.logFoo(); //logs &quot;foobar&quot;;
+delete thing.foo;
+thing.logFoo(); //logs &quot;bar&quot;;
+</code></pre><p>或者你也能直接通过引用函数对象的prototype 来获得你需要的值。</p>
+<pre><code>function Thing() {
+}
+Thing.prototype.foo = &quot;bar&quot;;
+Thing.prototype.logFoo = function () {
+    console.log(this.foo, Thing.prototype.foo);
+}
+
+var thing = new Thing();
+thing.foo = &quot;foo&quot;;
+thing.logFoo(); //logs &quot;foo bar&quot;;
+</code></pre><p>通过一个函数创建的实例会共享这个函数的prototype属性的值，如果你给这个函数的prototype赋值一个Array，那么所有的实例都会共享这个Array，除非你在实例里面重写了这个Array，这种情况下，函数的prototype的Array就会被隐藏掉。</p>
+<pre><code>function Thing() {
+}
+Thing.prototype.things = []; 
+
+var thing1 = new Thing();
+var thing2 = new Thing();
+thing1.things.push(&quot;foo&quot;);
+console.log(thing2.things); //logs [&quot;foo&quot;]
+</code></pre><p>从上面可以看出给一个函数的prototype赋值一个Array通常是一个错误的做法。每一个实例都共享一个Array，没有自己专属的Array，如果你想每一个实例有他们专属的Array，你应该在函数里面创建而不是在prototype里面创建。</p>
+<pre><code>function Thing() {
+    this.things = [];
+}
+
+
+var thing1 = new Thing();
+var thing2 = new Thing();
+thing1.things.push(&quot;foo&quot;);
+console.log(thing1.things); //logs [&quot;foo&quot;]
+console.log(thing2.things); //logs []
+</code></pre><p>实际上你可以通过把多个函数的prototype链接起来的从而形成一个原型链，因此this就会魔法般地沿着这条原型链往上查找直到找你你需要引用的值。</p>
+<pre><code>function Thing1() {
+}
+Thing1.prototype.foo = &quot;bar&quot;;
+
+function Thing2() {
+}
+Thing2.prototype = new Thing1();
+
+
+var thing = new Thing2();
+console.log(thing.foo); //logs &quot;bar&quot;
+</code></pre><p>一些人利用原型链的特性来在JavaScript模仿经典的面向对象的继承方式。任何给用于构建原型链的函数的this的赋值的语句都会隐藏原型链上游的相同的属性。</p>
+<pre><code>function Thing1() {
+}
+Thing1.prototype.foo = &quot;bar&quot;;
+
+function Thing2() {
+    this.foo = &quot;foo&quot;;  //与原型链上游属性相同，覆盖上游属性
+}
+Thing2.prototype = new Thing1();
+
+function Thing3() {
+}
+Thing3.prototype = new Thing2();
+
+var thing = new Thing3();
+ console.log(thing.foo); //logs &quot;foo&quot;
+</code></pre><p>我喜欢把被赋值给prototype的函数叫做方法。在上面的例子中，我已经使用过方法了，如logFoo。这些方法有着相同的prototype，即创建这些实例的原始函数。我通常把这些原始函数叫做构造函数。在定义的方法里面使用this会影响到当前实例的原型链的上游的this。这意味着你直接给this赋值的时候，隐藏了原型链上游的相同的属性值。这个实例的任何方法都会使用这个最新的值而不是原型里面定义的这个相同的值。</p>
+<pre><code>function Thing1() {
+}
+Thing1.prototype.foo = &quot;bar&quot;;
+Thing1.prototype.logFoo = function () {
+    console.log(this.foo);
+}
+
+function Thing2() {
+    this.foo = &quot;foo&quot;;
+}
+Thing2.prototype = new Thing1();
+
+
+var thing = new Thing2();
+thing.logFoo(); //logs &quot;foo&quot;;
+</code></pre><p>在JavaScript里面你可以嵌套函数，也就是你可以在函数里面定义函数。嵌套函数可以通过闭包捕获父函数的变量，但是这个函数没有继承this</p>
+<pre><code>function Thing() {
+}
+Thing.prototype.foo = &quot;bar&quot;;
+Thing.prototype.logFoo = function () {
+    var info = &quot;attempting to log this.foo:&quot;;
+    function doIt() {
+        console.log(info, this.foo); //此时在node环境中this是global对象，浏览器中是window对象
+    }
+    doIt();
+}
+var thing = new Thing();
+thing.logFoo();  //logs &quot;attempting to log this.foo: undefined&quot;
+</code></pre><p>在doIt里面的this是global对象或者在严格模式下面是undefined。这是造成很多不熟悉JavaScript的人深陷 this陷阱的根源。在这种情况下事情变得非常糟糕，就像你把一个实例的方法当作函数参数传递给另外一个函数但是却不把这个实例传递给这个函数一样。在这种情况下，一个方法里面的环境变成了全局范围，或者在严格模式下面的undefined。</p>
+<pre><code>function Thing() {
+}
+Thing.prototype.foo = &quot;bar&quot;;
+Thing.prototype.logFoo = function () {  
+    console.log(this.foo);   
+}
+
+function doIt(method) {
+    method();
+}
+
+
+var thing = new Thing();
+thing.logFoo(); //logs &quot;bar&quot;
+doIt(thing.logFoo); //logs undefined
+</code></pre><p>一些人喜欢先把this捕获到一个变量里面，通常这个变量叫做self，来避免上面这种情况的发生。</p>
+<pre><code>function Thing() {
+}
+Thing.prototype.foo = &quot;bar&quot;;
+Thing.prototype.logFoo = function () {
+    var self = this;
+    var info = &quot;attempting to log this.foo:&quot;;
+    function doIt() {
+        console.log(info, self.foo);
+    }
+    doIt();
+}
+
+
+var thing = new Thing();
+thing.logFoo();  //logs &quot;attempting to log this.foo: bar&quot;
+</code></pre><p>但是当你需要把一个方法作为一个值传递给一个函数的时候并不管用。</p>
+<pre><code>function Thing() {
+}
+Thing.prototype.foo = &quot;bar&quot;;
+Thing.prototype.logFoo = function () { 
+    var self = this;
+    function doIt() {
+        console.log(self.foo);
+    }
+    doIt();
+}
+
+function doItIndirectly(method) {
+    method();
+}
+
+
+var thing = new Thing();
+thing.logFoo(); //logs &quot;bar&quot;
+doItIndirectly(thing.logFoo); //logs undefined
+</code></pre><p>你可以通过bind将实例和方法一切传递给函数来解决这个问题，bind是一个函数，可以定义在所有函数和方法的函数对象上面</p>
+<pre><code>function Thing() {
+}
+Thing.prototype.foo = &quot;bar&quot;;
+Thing.prototype.logFoo = function () { 
+    console.log(this.foo);
+}
+
+function doIt(method) {
+    method();
+}
+
+
+var thing = new Thing();
+doIt(thing.logFoo.bind(thing)); //logs bar
+</code></pre><p>你同样可以使用apply和call来在新的上下文中调用方法或函数。</p>
+<pre><code>function Thing() {
+}
+Thing.prototype.foo = &quot;bar&quot;;
+Thing.prototype.logFoo = function () { 
+    function doIt() {
+        console.log(this.foo);
+    }
+    doIt.apply(this);
+}
+
+function doItIndirectly(method) {
+    method();
+}
+
+
+var thing = new Thing();
+doItIndirectly(thing.logFoo.bind(thing)); //logs bar
+</code></pre><p>你可以用bind来代替任何一个函数或者方法的this，即便它没有赋值给实例的初始prototype。</p>
+<pre><code>function Thing() {
+}
+Thing.prototype.foo = &quot;bar&quot;;
+
+
+function logFoo(aStr) {
+    console.log(aStr, this.foo);
+}
+
+
+var thing = new Thing();
+logFoo.bind(thing)(&quot;using bind&quot;); //logs &quot;using bind bar&quot;
+logFoo.apply(thing, [&quot;using apply&quot;]); //logs &quot;using apply bar&quot;
+logFoo.call(thing, &quot;using call&quot;); //logs &quot;using call bar&quot;
+logFoo(&quot;using nothing&quot;); //logs &quot;using nothing undefined&quot;
+</code></pre><p>你应该避免在构造函数里面返回任何东西，因为这可能代替本来应该返回的实例。</p>
+<pre><code>function Thing() {
+    return {};
+}
+Thing.prototype.foo = &quot;bar&quot;;
+
+
+Thing.prototype.logFoo = function () {
+    console.log(this.foo);
+}
+
+
+var thing = new Thing();
+thing.logFoo(); //Uncaught TypeError: undefined is not a function
+</code></pre><p>奇怪的是，如果你在构造函数里面返回了一个原始值，上面所述的情况并不会发生并且返回语句被忽略了。最好不要在你将通过new调用的构造函数里面返回任何类型的数据，即便你知道自己正在做什么。如果你想创建一个工厂模式，通过一个函数来创建一个实例，这个时候不要使用new来调用函数。当然这个建议是可选的</p>
+<blockquote>
+<p>你可以通过使用Object.create来避免使用new，这样同样能够创建一个实例。</p>
+</blockquote>
+<pre><code>function Thing() {
+}
+Thing.prototype.foo = &quot;bar&quot;;
+
+
+Thing.prototype.logFoo = function () {
+    console.log(this.foo);
+}
+
+var thing =  Object.create(Thing.prototype);
+thing.logFoo(); //logs &quot;bar&quot;
+</code></pre><p>在这种情况下并不会调用构造函数</p>
+<pre><code>function Thing() {
+    this.foo = &quot;foo&quot;;
+}
+Thing.prototype.foo = &quot;bar&quot;;
+
+
+Thing.prototype.logFoo = function () {
+    console.log(this.foo);
+}
+
+
+var thing =  Object.create(Thing.prototype);
+thing.logFoo(); //logs &quot;bar&quot;
+</code></pre><p>因为Object.create不会调用构造函数的特性在你继承模式下你想通过原型链重写构造函数的时候非常有用。</p>
+<pre><code>function Thing1() {
+    this.foo = &quot;foo&quot;;
+}
+Thing1.prototype.foo = &quot;bar&quot;;
+
+function Thing2() {
+    this.logFoo(); //logs &quot;bar&quot;
+    Thing1.apply(this);
+    this.logFoo(); //logs &quot;foo&quot;
+}
+Thing2.prototype = Object.create(Thing1.prototype);
+Thing2.prototype.logFoo = function () {
+    console.log(this.foo);
+}
+
+var thing = new Thing2();
+</code></pre><h3 id="object-this"><a href="#object-this" class="headerlink" title="object this"></a>object this</h3><p>在一个对象的一个函数里，你可以通过this来引用这个对象的其他属性。这个用new来新建一个实例是不一样的。</p>
+<pre><code>var obj = {
+    foo: &quot;bar&quot;,
+    logFoo: function () {
+        console.log(this.foo);
+    }
+};
+
+obj.logFoo(); //logs &quot;bar&quot;
+</code></pre><p>注意，没有使用new，没有使用Object.create，也没有使用函数调用创建一个对象。你也可以将对象当作一个实例将函数绑定到上面。</p>
+<pre><code>var obj = {
+    foo: &quot;bar&quot;
+};
+
+function logFoo() {
+    console.log(this.foo);
+}
+
+logFoo.apply(obj); //logs &quot;bar&quot;
+</code></pre><p>当你用这种方式使用this的时候，并不会越出当前的对象。只有有相同直接父元素的属性才能通过this共享变量</p>
+<pre><code>var obj = {
+    foo: &quot;bar&quot;,
+    deeper: {
+        logFoo: function () {
+            console.log(this.foo);
+        }
+    }
+};
+
+obj.deeper.logFoo(); //logs undefined
+</code></pre><p>你可以直接通过对象引用你需要的属性</p>
+<pre><code>var obj = {
+    foo: &quot;bar&quot;,
+    deeper: {
+        logFoo: function () {
+            console.log(obj.foo);
+        }
+    }
+};
+
+obj.deeper.logFoo(); //logs &quot;bar&quot;
+</code></pre><h3 id="DOM-event-this"><a href="#DOM-event-this" class="headerlink" title="DOM event this"></a>DOM event this</h3><p>在一个HTML DOM事件处理程序里面，this始终指向这个处理程序被所绑定到的HTML DOM节点</p>
+<pre><code>function Listener() {
+    document.getElementById(&quot;foo&quot;).addEventListener(&quot;click&quot;,
+       this.handleClick);
+}
+Listener.prototype.handleClick = function (event) {
+    console.log(this); //logs &quot;&lt;div id=&quot;foo&quot;&gt;&lt;/div&gt;&quot;
+}
+
+var listener = new Listener();
+document.getElementById(&quot;foo&quot;).click();
+</code></pre><p>除非你自己通过bind切换了上下文</p>
+<pre><code>function Listener() {
+    document.getElementById(&quot;foo&quot;).addEventListener(&quot;click&quot;, 
+        this.handleClick.bind(this));
+}
+Listener.prototype.handleClick = function (event) {
+    console.log(this); //logs Listener {handleClick: function}
+}
+
+var listener = new Listener();
+document.getElementById(&quot;foo&quot;).click();
+</code></pre><h3 id="HTML-this"><a href="#HTML-this" class="headerlink" title="HTML this"></a>HTML this</h3><p>在HTML节点的属性里面，你可以放置JavaScript代码，this指向了这个元素</p>
+<pre><code>&lt;div id=&quot;foo&quot; onclick=&quot;console.log(this);&quot;&gt;&lt;/div&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+document.getElementById(&quot;foo&quot;).click(); //logs &lt;div id=&quot;foo&quot;...
+&lt;/script&gt;
+</code></pre><h3 id="override-this"><a href="#override-this" class="headerlink" title="override this"></a>override this</h3><p>你不能重写this，因为它是保留字</p>
+<pre><code>function test () {
+    var this = {};  // Uncaught SyntaxError: Unexpected token this 
+}
+eval this
+</code></pre><p>你可以通过eval来访问this</p>
+<pre><code>function Thing () {
+}
+Thing.prototype.foo = &quot;bar&quot;;
+Thing.prototype.logFoo = function () {
+    eval(&quot;console.log(this.foo)&quot;); //logs &quot;bar&quot;
+}
+
+var thing = new Thing();
+thing.logFoo();
+</code></pre><p>这会造成一个安全问题，除非不用eval，没有其他方式来避免这个问题。</p>
+<p>在通过Function来创建一个函数的时候，同样能够访问this</p>
+<pre><code>function Thing () {
+}
+Thing.prototype.foo = &quot;bar&quot;;
+Thing.prototype.logFoo = new Function(&quot;console.log(this.foo);&quot;);
+
+var thing = new Thing();
+thing.logFoo(); //logs &quot;bar&quot;
+</code></pre><h3 id="with-this"><a href="#with-this" class="headerlink" title="with this"></a>with this</h3><p>你可以通过with来将this添加到当前的执行环境，并且读写this的属性的时候不需要通过this</p>
+<pre><code>function Thing () {
+}
+Thing.prototype.foo = &quot;bar&quot;;
+Thing.prototype.logFoo = function () {
+    with (this) {
+        console.log(foo);
+        foo = &quot;foo&quot;;
+    }
+}
+
+var thing = new Thing();
+thing.logFoo(); // logs &quot;bar&quot;
+console.log(thing.foo); // logs &quot;foo&quot;
+</code></pre><p>许多人认为这样使用是不好的因为with本身就饱受争议。</p>
+<h3 id="jQuery-this"><a href="#jQuery-this" class="headerlink" title="jQuery this"></a>jQuery this</h3><p>和HTML DOM元素节点的事件处理程序一样，在许多情况下JQuery的this都指向HTML元素节点。这在事件处理程序和一些方便的方法中都是管用的，比如$.each</p>
+<pre><code>&lt;div class=&quot;foo bar1&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;foo bar2&quot;&gt;&lt;/div&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+$(&quot;.foo&quot;).each(function () {
+    console.log(this); //logs &lt;div class=&quot;foo...
+});
+$(&quot;.foo&quot;).on(&quot;click&quot;, function () {
+    console.log(this); //logs &lt;div class=&quot;foo...
+});
+$(&quot;.foo&quot;).each(function () {
+    this.click();
+});
+&lt;/script&gt;
+</code></pre><h3 id="thisArg-this"><a href="#thisArg-this" class="headerlink" title="thisArg this"></a>thisArg this</h3><p>如果你用过underscore.js 或者 lo-dash 你可能知道许多类库的方法可以通过一个叫做thisArg 的函数参数来传递实例，这个函数参数会作为this的上下文。举个例子，这适用于_.each。原生的JavaScript在ECMAScript 5的时候也允许函数传递一个thisArg参数了，比如forEach。事实上，之前阐述的bind，apply和call的使用已经给你创造了传递thisArg参数给函数的机会。这个参数将this绑定为你所传递的对象。</p>
+<pre><code>function Thing(type) {
+    this.type = type;
+}
+Thing.prototype.log = function (thing) {
+    console.log(this.type, thing);
+}
+Thing.prototype.logThings = function (arr) {
+   arr.forEach(this.log, this); // logs &quot;fruit apples...&quot;
+}
+
+var thing = new Thing(&quot;fruit&quot;);
+thing.logThings([&quot;apples&quot;, &quot;oranges&quot;, &quot;strawberries&quot;, &quot;bananas&quot;]);
+</code></pre><p>这使得代码变得更加简洁，因为避免了一大堆bind语句、函数嵌套和this暂存的使用。</p>
+<h3 id="把上面的代码运行下效果更佳。"><a href="#把上面的代码运行下效果更佳。" class="headerlink" title="把上面的代码运行下效果更佳。"></a>把上面的代码运行下效果更佳。</h3>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;原文出自：&lt;a href=&quot;https://segmentfault.com/a/1190000002640298#articleHeader3&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;JavaScript中的this陷阱的最全收集–没有之一&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;个人觉得，如果需要掌握一门语言，掌握它的API只是学了皮毛，理解这门语言的精髓才是重点，提及JavaScript的精髓，&lt;strong&gt;this&lt;/strong&gt;、&lt;strong&gt;闭包&lt;/strong&gt;、&lt;strong&gt;作用域链&lt;/strong&gt;、&lt;strong&gt;函数&lt;/strong&gt;是当之无愧的。&lt;/p&gt;
+&lt;p&gt;JavaScript中很多时候会用到this，下面详细介绍每一种情况。在这里我想首先介绍一下宿主环境这个概念。一门语&lt;br&gt;言在运行的时候，需要一个环境，叫做宿主环境。对于JavaScript，宿主环境最常见的是web浏览器，浏览器提供了
+    
+    </summary>
+    
+    
+      <category term="JavaScript" scheme="http://fanwalker.com/tags/JavaScript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>websocket实现简单聊天程序</title>
+    <link href="http://fanwalker.com/2017/08/20/websocket%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E8%81%8A%E5%A4%A9%E7%A8%8B%E5%BA%8F/"/>
+    <id>http://fanwalker.com/2017/08/20/websocket实现简单聊天程序/</id>
+    <published>2017-08-20T09:06:17.000Z</published>
+    <updated>2017-09-09T15:00:25.759Z</updated>
+    
+    <content type="html"><![CDATA[<p>程序的流程图：<br><a id="more"></a></p>
+<p><img src="http://i.imgur.com/xNJdw2f.png" alt=""></p>
+<h2 id="主要代码："><a href="#主要代码：" class="headerlink" title="主要代码："></a><strong>主要代码：</strong></h2><h3 id="服务端-app-js"><a href="#服务端-app-js" class="headerlink" title="服务端 app.js"></a>服务端 app.js</h3><p>先加载所需要的通信模块：</p>
+<pre><code>var express = require(&apos;express&apos;);
+var app = express();
+var http = require(&apos;http&apos;).createServer(app);
+var io = require(&apos;socket.io&apos;).listen(http);
+var fs = require(&apos;fs&apos;);
+</code></pre><p>创建用户列表和消息列表：</p>
+<pre><code>var person = [];
+var history = [];
+</code></pre><p>绑定并监听80端口：</p>
+<pre><code>app.get(&apos;/&apos;,function (req,res) {
+    res.sendFile(__dirname + &apos;/login.html&apos;);
+});
+
+http.listen(80,function () {
+    console.log(&apos;listening on *:80&apos;);
+});
+</code></pre><p>客户端连接成功后，触发响应事件connection，完成要绑定的事件并实现客户端出发的事件：</p>
+<pre><code>io.sockets.on(&apos;connection&apos;,function (socket) {
+    var user = &apos;&apos;;
+
+    socket.emit(&apos;history&apos;, history);
+    io.sockets.emit(&apos;updatePerson&apos;, person); 
+
+    socket.on(&apos;sendMsg&apos;, function (data) {
+        var obj = {};
+        obj.content = data;
+        obj.time = now();
+        obj.name = user;
+        if (history.length === history_num) {
+            history.shift();
+        }
+        history.push(obj);
+        io.sockets.emit(&apos;news&apos;, obj);
+    });
+
+    socket.on(&apos;setUserName&apos;, function (data) {
+        user = data;
+        person.push(user);
+        io.sockets.emit(&apos;loginsucess&apos;);
+        io.sockets.emit(&apos;updatePerson&apos;, person);
+        io.sockets.emit(&apos;news&apos;, {content: user + &apos;进入房间&apos;, time: now(), name: &apos;系统消息&apos;});
+    });
+
+    socket.on(&apos;disconnect&apos;, function () {
+        if (user !== &apos;&apos;) {
+            person.forEach(function (value, index) {
+                if (value === user) {
+                    person.splice(index, 1);
+                }
+            });
+            io.sockets.emit(&apos;news&apos;, {content: user + &apos;离开房间&apos;, time: now(), name: &apos;系统消息&apos;});
+            io.sockets.emit(&apos;updatePerson&apos;, person);
+        }
+    });
+});
+</code></pre><h3 id="客户端-index-js："><a href="#客户端-index-js：" class="headerlink" title="客户端 index.js："></a>客户端 index.js：</h3><p>先初始化用户信息：</p>
+<pre><code>$scope.data = [];     //消息队列  
+$scope.name = &apos;&apos;;    //用户名
+$scope.content = &apos;&apos;;  //用户输入的消息
+$scope.personlist = []; //用户队列
+</code></pre><p>然后连接服务器端：</p>
+<pre><code>const  socket_url = &apos;http://localhost&apos;;
+var socket = io.connect(socket_url);
+</code></pre><p>连接成功后，对用户昵称输入的验证：</p>
+<pre><code>$scope.checkName = function () {
+    if($scope.name!==&apos;&apos;){
+        if($scope.personlist.length!==0){
+            if($scope.personlist.indexOf($scope.name)&gt;-1) {
+                document.getElementById(&quot;info&quot;).textContent = &quot;该昵称已被占用，请重新输入&quot;;
+            }
+            else{
+                socket.emit(&apos;setUserName&apos;, $scope.name);
+            }
+        }
+        else{
+            socket.emit(&apos;setUserName&apos;, $scope.name);
+        }
+    }
+    else{
+        document.getElementById(&apos;name&apos;).focus();
+    }
+};
+</code></pre><p>验证成功后，对用户输入消息要触发的事件：</p>
+<pre><code>$scope.sendMsg = function(data){
+    var date = new Date();
+    data = $scope.content;
+    if($scope.content !== &apos;&apos;){
+        socket.emit(&apos;sendMsg&apos;,data);
+    }
+    $scope.content = &apos;&apos;;
+};
+</code></pre><h4 id="程序的部分运行测试结果："><a href="#程序的部分运行测试结果：" class="headerlink" title="程序的部分运行测试结果："></a>程序的部分运行测试结果：</h4><p>浏览器输入localhost后展示的用户登录界面:</p>
+<p><img src="http://i.imgur.com/puk3YKy.png" alt=""></p>
+<p>昵称重复后的提示：</p>
+<p><img src="http://i.imgur.com/nwZmF3S.png" alt=""></p>
+<p>昵称输入成功后进入当前用户的聊天界面：</p>
+<p><img src="http://i.imgur.com/92hHDKg.png" alt=""></p>
+<p>源码地址：<a href="https://github.com/FanWalker/webchat" target="_blank" rel="external">GitHub</a></p>
+<p>参考学习：</p>
+<p>Node.js + Web Socket 打造即时聊天程序嗨聊：<a href="http://www.cnblogs.com/Wayou/p/hichat_built_with_nodejs_socket.html" target="_blank" rel="external">http://www.cnblogs.com/Wayou/p/hichat_built_with_nodejs_socket.html</a></p>
+<p>基于websocket的一个简单的聊天室：<a href="https://github.com/ShanaMaid/websocket-express-webchat" target="_blank" rel="external">https://github.com/ShanaMaid/websocket-express-webchat</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;程序的流程图：&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="websocket" scheme="http://fanwalker.com/tags/websocket/"/>
+    
+      <category term="node.js" scheme="http://fanwalker.com/tags/node-js/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CSS3 3D transform变换</title>
+    <link href="http://fanwalker.com/2017/08/15/CSS3-3D-transform%E5%8F%98%E6%8D%A2/"/>
+    <id>http://fanwalker.com/2017/08/15/CSS3-3D-transform变换/</id>
+    <published>2017-08-15T05:34:29.000Z</published>
+    <updated>2017-09-09T15:00:25.672Z</updated>
+    
+    <content type="html"><![CDATA[<p> 在学习慕课网H5+JS+CSS3实现圣诞情缘的时候遇到css3的3D转换，虽然也学习过css3的3d变化教程，但都是基于理论上，没有自己亲自应用过，所以现在使用的时候就有点吃力。今天就重新学习了一遍css3的3D变换。</p>
+<h3 id="一、rotateX-rotateY-rotateZ"><a href="#一、rotateX-rotateY-rotateZ" class="headerlink" title="一、rotateX, rotateY, rotateZ"></a>一、rotateX, rotateY, rotateZ</h3><p>先介绍rotateX(), rotateY(), rotateZ()这三个方法，在介绍这三个方法之前我们先来一张图：</p>
+<a id="more"></a>
+<p><img src="http://i.imgur.com/mhm6zD7.png" alt=""></p>
+<p>这是3d转换的基本图例，标志出了实物中x、y、z轴的分布，如果实在看不懂的画，可以找来一张纸，在纸上面横竖各放一只笔，横着的代表x轴，竖着代表y轴，最后立着放一只，代表z轴，这样就比较形象了。</p>
+<p>现在就来看看rotateX(), rotateY(), rotateZ()这三个方法:<br>rotateX():图像绕着X轴旋转；rotateY()：图像绕着Y轴旋转；rotateZ()：图像绕着Z轴旋转；实际的效果图如下:</p>
+<p><img src="http://i.imgur.com/DxLH8yA.gif" alt=""></p>
+<h3 id="二、perspective属性"><a href="#二、perspective属性" class="headerlink" title="二、perspective属性"></a>二、perspective属性</h3><p>perspective直译成中文就是透视，也可以理解为视角，它的透视方式为近大远小，举个例子，在生活中，我们站在很远的地方看物体，这时的物体近似为一个点，但我们走近一点看的时候，物体棱角分明很立体长宽高都看的清清楚楚。</p>
+<p>perspective属性设置镜头到元素平面的距离，这个镜头可以认为就是我们的眼睛，css3的3D transform的视点是在浏览器的前方，近似为我们眼睛所在的地方。举个例子，一个1680像素宽的显示器中有张美女图片，perspective值为2000像素，浏览器展示出来的效果就和你看距离你2000像素那么远的美女的效果是一样的。</p>
+<p>设置perspective属性有两种方法，一种是用在动画元素的父辈元素上即舞台元素，如：</p>
+<pre>
+.stage{
+   perspective:300px;
+}
+</pre>
+
+<p>另一种就是写在当前的动画元素上,与transform的其他属性写在一起：</p>
+<pre>
+.curAnim{
+   transform: perspective(300px) rotateX(90deg);
+}
+</pre>
+
+<p>他们在展示一个元素的时候效果是一样的，但舞台上元素多起来的时候，效果就不一样了，更详细的demo展示，参考张鑫旭的博文<a href="http://www.zhangxinxu.com/wordpress/2012/09/css3-3d-transform-perspective-animate-transition/" target="_blank" rel="external">好吧，CSS3 3D transform变换，不过如此！</a></p>
+<h3 id="三、translateZ属性"><a href="#三、translateZ属性" class="headerlink" title="三、translateZ属性"></a>三、translateZ属性</h3><p>translateZ属性是展示了近大远小的原理，translateZ的值越大，可以理解为元素距离我们的眼睛越近，看到的元素也越大，translateZ的值越小，元素距离我们就越远，看到的也就越小，如设置</p>
+<pre>
+perspective:300px;
+</pre>
+
+<p>当translateZ=300px时，元素会撑满整个页面，translateZ=-300px时，我们看到的元素就很小。</p>
+<h3 id="四、perspective-origin属性"><a href="#四、perspective-origin属性" class="headerlink" title="四、perspective-origin属性"></a>四、perspective-origin属性</h3><p>perspective-origin属性设置的是你观看的位置，引用<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/perspective-origin" target="_blank" rel="external">Mozilla 开发者网络（MDN）的描述</a>：</p>
+<blockquote>
+<p>The perspective-origin CSS property determines the position at which the viewer is looking. </p>
+</blockquote>
+<p>其默认值为perspective-origin:50% 50%;</p>
+<p>可以通过实例来感受一下：<a href="https://www.w3cschool.cn/tryrun/showhtml/trycss3_perspective-origin1" target="_blank" rel="external">https://www.w3cschool.cn/tryrun/showhtml/trycss3_perspective-origin1</a></p>
+<h3 id="五、transform-style-preserve-3d"><a href="#五、transform-style-preserve-3d" class="headerlink" title="五、transform-style: preserve-3d"></a>五、transform-style: preserve-3d</h3><p>transform-style属性是决定其子元素上用3d效果展示还是以2d平面效果展示，下面是来自<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/transform-style" target="_blank" rel="external">Mozilla 开发者网络（MDN）的描述</a>：</p>
+<blockquote>
+<p>The transform-style CSS property determines if the children of the element are positioned in the 3D-space or are flattened in the plane of the element.</p>
+</blockquote>
+<p>perspective-style有两个参数flat|preserve-3d，flat是设置为平面展示没有3d效果，而preserve-3d则是以3d效果展示；</p>
+<p>perspective-style一般是声明在3D变换的兄弟元素们的父元素上，也就是舞台元素。</p>
+<h3 id="六、backface-visibility"><a href="#六、backface-visibility" class="headerlink" title="六、backface-visibility"></a>六、backface-visibility</h3><p>backface-visibility属性设置的是我们能否看到元素的背面，可设置的值有两个：visible | hidden：</p>
+<p>backface-visibility : visible 效果图：</p>
+<p><img src="http://i.imgur.com/JZylKXh.png" alt=""></p>
+<p>backface-visibility : hidden 效果图：</p>
+<p><img src="http://i.imgur.com/knyXZYV.png" alt=""></p>
+<h3 id="七、总结"><a href="#七、总结" class="headerlink" title="七、总结"></a>七、总结</h3><p>这些属性虽然理解起来并不是很难，但如果没有用到实际中去也会很快的遗忘，重在实践。</p>
+<p>给自己定个小目标，每天进步一点点！</p>
+<h3 id="参考文章："><a href="#参考文章：" class="headerlink" title="参考文章："></a>参考文章：</h3><p>张鑫旭的博文：<a href="http://www.zhangxinxu.com/wordpress/?p=2592" target="_blank" rel="external">好吧，CSS3 3D transform变换，不过如此！</a></p>
+<p>Mozilla 开发者网络（MDN）：<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Transforms" target="_blank" rel="external">CSS Transforms</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt; 在学习慕课网H5+JS+CSS3实现圣诞情缘的时候遇到css3的3D转换，虽然也学习过css3的3d变化教程，但都是基于理论上，没有自己亲自应用过，所以现在使用的时候就有点吃力。今天就重新学习了一遍css3的3D变换。&lt;/p&gt;
+&lt;h3 id=&quot;一、rotateX-rotateY-rotateZ&quot;&gt;&lt;a href=&quot;#一、rotateX-rotateY-rotateZ&quot; class=&quot;headerlink&quot; title=&quot;一、rotateX, rotateY, rotateZ&quot;&gt;&lt;/a&gt;一、rotateX, rotateY, rotateZ&lt;/h3&gt;&lt;p&gt;先介绍rotateX(), rotateY(), rotateZ()这三个方法，在介绍这三个方法之前我们先来一张图：&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="css" scheme="http://fanwalker.com/tags/css/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>初识观察者模式</title>
+    <link href="http://fanwalker.com/2017/08/13/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%90%86%E8%A7%A3/"/>
+    <id>http://fanwalker.com/2017/08/13/观察者模式的理解/</id>
+    <published>2017-08-13T13:23:27.000Z</published>
+    <updated>2017-09-09T15:00:25.770Z</updated>
+    
+    <content type="html"><![CDATA[<p>在学习H5+JS+CSS3实现动画的时候接触到JavaScript设计模式之一的观察者模式，就顺便查了网上的资料，不过看了网上的一些资料，对观察者模式的应用还是有些懵懵懂懂，只是了解到观察者模式所做的工作就是在解耦，让耦合的双方都依赖于抽象，而不是依赖于具体。从而使得各自的变化都不会影响到另一边的变化。比如浏览器的事件也是观察者模式：</p>
+<pre><code>div.onclick = function click(){
+    console.log(&apos;click&apos;);
+}
+</code></pre><a id="more"></a>
+<p>function click订阅了div的click事件，当我们的鼠标点击操作，事件发布，对应function就会执行。这个function click 就是一个观察者。即这里的DOM元素便是主体，事件处理代码便是观察者。</p>
+<p>我对于观察者模式的理解也就仅限于此，对它的实现与应用还没有完全理解，下面的内容转载自<a href="http://www.cnblogs.com/TomXu/archive/2012/03/02/2355128.html" target="_blank" rel="external">汤姆大叔的博客《深入理解JavaScript系列（32）：设计模式之观察者模式》</a>(对自己要求是多看几遍，慢慢理解)</p>
+<h3 id="正文（版本一）"><a href="#正文（版本一）" class="headerlink" title="正文（版本一）"></a>正文（版本一）</h3><p>JS里对观察者模式的实现是通过回调来实现的，我们来先定义一个pubsub对象，其内部包含了3个方法：订阅、退订、发布。</p>
+<pre><code>var pubsub = {};
+(function (q) {
+    var topics = {}, // 回调函数存放的数组
+    subUid = -1;
+    // 发布方法
+    q.publish = function (topic, args) {
+        if (!topics[topic]) {
+            return false;
+        }
+        setTimeout(function () {
+            var subscribers = topics[topic],
+            len = subscribers ? subscribers.length : 0;
+            while (len--) {
+                subscribers[len].func(topic, args);
+            }
+        }, 0);
+        return true;
+    };
+    //订阅方法
+    q.subscribe = function (topic, func) {
+        if (!topics[topic]) {
+            topics[topic] = [];
+        }
+        var token = (++subUid).toString();
+        topics[topic].push({
+            token: token,
+            func: func
+        });
+        return token;
+    };
+    //退订方法
+    q.unsubscribe = function (token) {
+        for (var m in topics) {
+            if (topics[m]) {
+                for (var i = 0, j = topics[m].length; i &lt; j; i++) {
+                    if (topics[m][i].token === token) {
+                           topics[m].splice(i, 1);
+                        return token;
+                    }
+                }
+            }
+        }
+        return false;
+    };
+} (pubsub));
+</code></pre><p>使用方式如下：</p>
+<pre><code>//来，订阅一个
+pubsub.subscribe(&apos;example1&apos;, function (topics, data) {
+    console.log(topics + &quot;: &quot; + data);
+});
+
+//发布通知
+pubsub.publish(&apos;example1&apos;, &apos;hello world!&apos;);
+pubsub.publish(&apos;example1&apos;, [&apos;test&apos;, &apos;a&apos;, &apos;b&apos;, &apos;c&apos;]);
+pubsub.publish(&apos;example1&apos;, [{ &apos;color&apos;: &apos;blue&apos; }, { &apos;text&apos;: &apos;hello&apos;}]);
+</code></pre><p>怎么样？用起来是不是很爽？但是这种方式有个问题，就是没办法退订订阅，要退订的话必须指定退订的名称，所以我们再来一个版本：</p>
+<pre><code>//将订阅赋值给一个变量，以便退订
+var testSubscription = pubsub.subscribe(&apos;example1&apos;, function (topics, data) {
+    console.log(topics + &quot;: &quot; + data);
+});
+
+//发布通知
+pubsub.publish(&apos;example1&apos;, &apos;hello world!&apos;);
+pubsub.publish(&apos;example1&apos;, [&apos;test&apos;, &apos;a&apos;, &apos;b&apos;, &apos;c&apos;]);
+pubsub.publish(&apos;example1&apos;, [{ &apos;color&apos;: &apos;blue&apos; }, { &apos;text&apos;: &apos;hello&apos;}]);
+
+//退订
+setTimeout(function () {
+    pubsub.unsubscribe(testSubscription);
+}, 0);
+
+//再发布一次，验证一下是否还能够输出信息
+pubsub.publish(&apos;example1&apos;, &apos;hello again! (this will fail)&apos;);
+</code></pre><h3 id="版本二"><a href="#版本二" class="headerlink" title="版本二"></a>版本二</h3><p>我们也可以利用原型的特性实现一个观察者模式，代码如下：</p>
+<pre><code>function Observer() {
+    this.fns = [];
+}
+Observer.prototype = {
+    subscribe: function (fn) {
+        this.fns.push(fn);
+    },
+    unsubscribe: function (fn) {
+        this.fns = this.fns.filter(
+                        function (el) {
+                            if (el !== fn) {
+                                return el;
+                            }
+                        }
+                    );
+    },
+    update: function (o, thisObj) {
+        var scope = thisObj || window;
+        this.fns.forEach(
+                        function (el) {
+                            el.call(scope, o);
+                        }
+                    );
+    }
+};
+
+//测试
+var o = new Observer;
+var f1 = function (data) {
+    console.log(&apos;Robbin: &apos; + data + &apos;, 赶紧干活了！&apos;);
+};
+
+var f2 = function (data) {
+    console.log(&apos;Randall: &apos; + data + &apos;, 找他加点工资去！&apos;);
+};
+
+o.subscribe(f1);
+o.subscribe(f2);
+
+o.update(&quot;Tom回来了！&quot;)
+
+//退订f1
+o.unsubscribe(f1);
+//再来验证
+o.update(&quot;Tom回来了！&quot;);   
+</code></pre><p>如果提示找不到filter或者forEach函数，可能是因为你的浏览器还不够新，暂时不支持新标准的函数，你可以使用如下方式自己定义：</p>
+<pre><code>if (!Array.prototype.forEach) {
+    Array.prototype.forEach = function (fn, thisObj) {
+        var scope = thisObj || window;
+        for (var i = 0, j = this.length; i &lt; j; ++i) {
+            fn.call(scope, this[i], i, this);
+        }
+    };
+}
+if (!Array.prototype.filter) {
+    Array.prototype.filter = function (fn, thisObj) {
+        var scope = thisObj || window;
+        var a = [];
+        for (var i = 0, j = this.length; i &lt; j; ++i) {
+            if (!fn.call(scope, this[i], i, this)) {
+                continue;
+            }
+            a.push(this[i]);
+        }
+        return a;
+    };
+}
+</code></pre><h3 id="版本三"><a href="#版本三" class="headerlink" title="版本三"></a>版本三</h3><p>如果想让多个对象都具有观察者发布订阅的功能，我们可以定义一个通用的函数，然后将该函数的功能应用到需要观察者功能的对象上，代码如下：</p>
+<pre><code>//通用代码
+var observer = {
+    //订阅
+    addSubscriber: function (callback) {
+        this.subscribers[this.subscribers.length] = callback;
+    },
+    //退订
+    removeSubscriber: function (callback) {
+        for (var i = 0; i &lt; this.subscribers.length; i++) {
+            if (this.subscribers[i] === callback) {
+                delete (this.subscribers[i]);
+            }
+        }
+    },
+    //发布
+    publish: function (what) {
+        for (var i = 0; i &lt; this.subscribers.length; i++) {
+            if (typeof this.subscribers[i] === &apos;function&apos;) {
+                this.subscribers[i](what);
+            }
+        }
+    },
+    // 将对象o具有观察者功能
+    make: function (o) { 
+        for (var i in this) {
+            o[i] = this[i];
+            o.subscribers = [];
+        }
+    }
+};
+</code></pre><p>然后订阅2个对象blogger和user，使用observer.make方法将这2个对象具有观察者功能，代码如下：</p>
+<pre><code>var blogger = {
+    recommend: function (id) {
+        var msg = &apos;dudu 推荐了的帖子:&apos; + id;
+        this.publish(msg);
+    }
+};
+
+var user = {
+    vote: function (id) {
+        var msg = &apos;有人投票了!ID=&apos; + id;
+        this.publish(msg);
+    }
+};
+
+observer.make(blogger);
+observer.make(user);
+</code></pre><p>使用方法就比较简单了，订阅不同的回调函数，以便可以注册到不同的观察者对象里（也可以同时注册到多个观察者对象里）：</p>
+<pre><code>var tom = {
+    read: function (what) {
+        console.log(&apos;Tom看到了如下信息：&apos; + what)
+    }
+};
+
+var mm = {
+    show: function (what) {
+        console.log(&apos;mm看到了如下信息：&apos; + what)
+    }
+};
+// 订阅
+blogger.addSubscriber(tom.read);
+blogger.addSubscriber(mm.show);
+blogger.recommend(123); //调用发布
+
+//退订
+blogger.removeSubscriber(mm.show);
+blogger.recommend(456); //调用发布
+
+//另外一个对象的订阅
+user.addSubscriber(mm.show);
+user.vote(789); //调用发布
+</code></pre><h3 id="jQuery版本"><a href="#jQuery版本" class="headerlink" title="jQuery版本"></a>jQuery版本</h3><p>根据jQuery1.7版新增的on/off功能，我们也可以定义jQuery版的观察者：</p>
+<pre><code>(function ($) {
+
+    var o = $({});
+
+    $.subscribe = function () {
+        o.on.apply(o, arguments);
+    };
+
+    $.unsubscribe = function () {
+        o.off.apply(o, arguments);
+    };
+
+    $.publish = function () {
+        o.trigger.apply(o, arguments);
+    };
+
+} (jQuery));
+</code></pre><p>调用方法比上面3个版本都简单：</p>
+<pre><code>//回调函数
+function handle(e, a, b, c) {
+    // `e`是事件对象，不需要关注
+    console.log(a + b + c);
+};
+
+//订阅
+$.subscribe(&quot;/some/topic&quot;, handle);
+//发布
+$.publish(&quot;/some/topic&quot;, [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]); // 输出abc
+
+
+$.unsubscribe(&quot;/some/topic&quot;, handle); // 退订
+
+//订阅
+$.subscribe(&quot;/some/topic&quot;, function (e, a, b, c) {
+    console.log(a + b + c);
+});
+
+$.publish(&quot;/some/topic&quot;, [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]); // 输出abc
+
+//退订（退订使用的是/some/topic名称，而不是回调函数哦，和版本一的例子不一样
+$.unsubscribe(&quot;/some/topic&quot;); 
+</code></pre><p>可以看到，他的订阅和退订使用的是字符串名称，而不是回调函数名称，所以即便传入的是匿名函数，我们也是可以退订的。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在学习H5+JS+CSS3实现动画的时候接触到JavaScript设计模式之一的观察者模式，就顺便查了网上的资料，不过看了网上的一些资料，对观察者模式的应用还是有些懵懵懂懂，只是了解到观察者模式所做的工作就是在解耦，让耦合的双方都依赖于抽象，而不是依赖于具体。从而使得各自的变化都不会影响到另一边的变化。比如浏览器的事件也是观察者模式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;div.onclick = function click(){
+    console.log(&amp;apos;click&amp;apos;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+    
+    </summary>
+    
+    
+      <category term="JavaScript" scheme="http://fanwalker.com/tags/JavaScript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>nodejs爬虫学习</title>
+    <link href="http://fanwalker.com/2017/08/12/nodejs%E7%88%AC%E8%99%AB%E5%AD%A6%E4%B9%A0/"/>
+    <id>http://fanwalker.com/2017/08/12/nodejs爬虫学习/</id>
+    <published>2017-08-12T00:08:21.000Z</published>
+    <updated>2017-09-09T15:00:25.750Z</updated>
+    
+    <content type="html"><![CDATA[<p>这篇文章主要是记录在学习nodejs爬虫时学到的知识。学习过程主要是参照了这篇文章：<br><a href="https://github.com/chokcoco/cnblogsArticle/issues/7" title="【nodeJS爬虫】前端爬虫系列 -- 小爬「博客园」" target="_blank" rel="external">https://github.com/chokcoco/cnblogsArticle/issues/7</a>，文章中对爬虫讲的很详细，对想要学习爬虫的同学会有帮助。</p>
+<h3 id="一、superagent"><a href="#一、superagent" class="headerlink" title="一、superagent"></a>一、superagent</h3><p>superagent是一款极好用的轻量级的更为优化的ajax API同时是nodejs模块，它专注于处理服务端/客户端的http请求，让你处理get,post,put,delete,head请求时更轻松。虽然有内置的http等模块进行请求的处理，但superagent更简单。来看看它们之间的对比：<br><a id="more"></a><br>    var request = require(‘superagent’);<br>    var http = require(‘http’);<br>    var queryString = require(‘queryString’);</p>
+<p>使用superagent：</p>
+<pre><code>request
+    .post(&apos;/api/pet&apos;)
+    .send({ name: &apos;Manny&apos;, species: &apos;cat&apos; })
+    .set(&apos;X-API-Key&apos;, &apos;foobar&apos;)
+    .set(&apos;Accept&apos;, &apos;application/json&apos;)
+    .end(function(err, res){
+        if (res.ok) {
+            alert(&apos;yay got &apos; + JSON.stringify(res.body));
+        } else {
+            alert(&apos;Oh no! error &apos; + res.text);
+        }
+    });
+</code></pre><p>使用http：</p>
+<pre><code>var postData = queryString.stringify({name: &apos;Manny&apos;, species:&apos;cat&apos;});
+var options = {
+    path: &apos;/api/pet&apos;,
+    method: &apos;POST&apos;,
+    headers: {
+        &apos;X-API-Key&apos;: &apos;foobar&apos;,
+        &apos;Accept&apos;: &apos;application/json&apos;
+            }
+    };
+
+var req = http.request(options, function (res) {
+    res.on(&apos;data&apos;, function (chunk) {
+        console.log(chunk);
+    });
+});
+
+req.on(&apos;error&apos;, function (err) {
+    console.log(err);
+});
+req.write(postData);
+req.end();
+</code></pre><p>从对比中可以发现superagent是链式操作的，用起来比http更方便，代码更容易读懂。更详细的使用请参考superagent官方文档：<a href="https://visionmedia.github.io/superagent/" title="superagent" target="_blank" rel="external">https://visionmedia.github.io/superagent/</a>，中文使用文档：<a href="https://cnodejs.org/topic/5378720ed6e2d16149fa16bd" title="superagent中文使用文档" target="_blank" rel="external">https://cnodejs.org/topic/5378720ed6e2d16149fa16bd</a></p>
+<h3 id="二、cheerio"><a href="#二、cheerio" class="headerlink" title="二、cheerio"></a>二、cheerio</h3><p>通过cheerio.load()方法获得一个实现了jQuery接口的变量，比如：</p>
+<pre><code>var cheerio = require(&apos;cheerio&apos;),
+//习惯性地将它命名为 `$`
+$ = cheerio.load(&apos;&lt;h2 class=&quot;title&quot;&gt;Hello world&lt;/h2&gt;&apos;);
+
+$(&apos;h2.title&apos;).text(&apos;Hello there!&apos;);
+$(&apos;h2&apos;).addClass(&apos;welcome&apos;);
+</code></pre><p>load()方法的参数可以是html里面的内容，也可以是整个html，调用完这个方法后你就可以利用 $ 使用 jquery 的语法了，官方文档：<a href="https://github.com/cheeriojs/cheerio" title="cheerio" target="_blank" rel="external">https://github.com/cheeriojs/cheerio</a> 。</p>
+<h3 id="三、eventproxy"><a href="#三、eventproxy" class="headerlink" title="三、eventproxy"></a>三、eventproxy</h3><p>使用eventproxy来控制并发。假设你要并发异步获取两三个地址的数据，并且要在获取到数据之后，对这些数据一起进行利用的话，常规的写法是自己维护一个计数器。</p>
+<p>先定义一个 var count = 0，然后每次抓取成功以后，就 count++。如果你是要抓取三个源的数据，由于你根本不知道这些异步操作到底谁先完成，那么每次当抓取成功的时候，就判断一下 count === 3。当值为真时，使用另一个函数继续完成操作。</p>
+<p>而 eventproxy 就起到了这个计数器的作用，它来帮你管理到底这些异步操作是否完成，完成之后，它会自动调用你提供的处理函数，并将抓取到的数据当参数传过来。</p>
+<p>一般我们写的计数器：</p>
+<pre><code>(function () {
+  var count = 0;
+  var result = {};
+
+  $.get(&apos;http://data1_source&apos;, function (data) {
+    result.data1 = data;
+    count++;
+    handle();
+    });
+  $.get(&apos;http://data2_source&apos;, function (data) {
+    result.data2 = data;
+    count++;
+    handle();
+    });
+  $.get(&apos;http://data3_source&apos;, function (data) {
+    result.data3 = data;
+    count++;
+    handle();
+    });
+
+  function handle() {
+    if (count === 3) {
+          var html = fuck(result.data1, result.data2, result.data3);
+          render(html);
+        }
+      }
+})();
+</code></pre><p>使用eventproxy：</p>
+<pre><code>var ep = new eventproxy();
+ep.all(&apos;data1_event&apos;, &apos;data2_event&apos;, &apos;data3_event&apos;, function (data1, data2, data3) {
+  var html = fuck(data1, data2, data3);
+  render(html);
+});
+
+$.get(&apos;http://data1_source&apos;, function (data) {
+  ep.emit(&apos;data1_event&apos;, data);
+  });
+
+$.get(&apos;http://data2_source&apos;, function (data) {
+  ep.emit(&apos;data2_event&apos;, data);
+  });
+
+$.get(&apos;http://data3_source&apos;, function (data) {
+  ep.emit(&apos;data3_event&apos;, data);
+  });
+</code></pre><p>ep.all(‘data1_event’, ‘data2_event’, ‘data3_event’, function (data1, data2, data3) {});</p>
+<p>这一句，监听了三个事件，分别是 data1_event, data2_event, data3_event，每次当一个源的数据抓取完成时，就通过 ep.emit() 来告诉 ep 自己，某某事件已经完成了。</p>
+<p>当三个事件未同时完成时，ep.emit() 调用之后不会做任何事；当三个事件都完成的时候，就会调用末尾的那个回调函数，来对它们进行统一处理。</p>
+<h3 id="四、async"><a href="#四、async" class="headerlink" title="四、async"></a>四、async</h3><p>使用 async 控制异步并发数量，在这个爬虫中要获取4000个URL，一个网站很容易被单IP的巨量 URL 请求攻击到崩溃，别的网站也有可能会因为你发出的并发连接数太多而当你是在恶意请求，把你的 IP 封掉，所以这里使用async 控制异步并发数量，下面展示async使用示例：</p>
+<pre><code>var async = require(&quot;async&quot;);
+
+// 并发连接数的计数器
+var concurrencyCount = 0;
+var fetchUrl = function (url, callback) {
+  // delay 的值在 2000 以内，是个随机的整数
+  var delay = parseInt((Math.random() * 10000000) % 2000, 10);
+  concurrencyCount++;
+  console.log(&apos;现在的并发数是&apos;, concurrencyCount, &apos;，正在抓取的是&apos;, url, &apos;，耗时&apos; + delay + &apos;毫秒&apos;);
+  setTimeout(function () {
+    concurrencyCount--;
+    callback(null, url + &apos; html content&apos;);
+  }, delay);
+};
+
+//伪造一组链接
+var urls = [];
+for(var i = 0; i &lt; 30; i++) {
+  urls.push(&apos;http://datasource_&apos; + i);
+}
+
+async.mapLimit(urls, 5, function (url, callback) {
+  fetchUrl(url, callback);
+}, function (err, result) {
+  console.log(&apos;final:&apos;);
+  console.log(result);
+});
+</code></pre><h3 id="五、事件轮询机制"><a href="#五、事件轮询机制" class="headerlink" title="五、事件轮询机制"></a>五、事件轮询机制</h3><p>我们来看一组代码</p>
+<pre><code>var http = require(&quot;http&quot;);
+
+function onRequest(request, response) {
+  console.log(&quot;Request received.&quot;);
+  response.writeHead(200, {&quot;Content-Type&quot;: &quot;text/plain&quot;});
+  response.write(&quot;Hello World&quot;);
+  response.end();
+}
+
+http.createServer(onRequest).listen(8888);
+
+console.log(&quot;Server has started.&quot;);
+</code></pre><p>类似于上面的代码：</p>
+<pre><code>var http = require(&quot;http&quot;);
+
+http.createServer(function(request, response) {
+  response.writeHead(200, {&quot;Content-Type&quot;: &quot;text/plain&quot;});
+  response.write(&quot;Hello World&quot;);
+  response.end();
+}).listen(8888);
+</code></pre><p>Node.js的事件循环是靠一个单线程不断地查询队列中是否有事件，当它读取到一个事件时，将调用与这个事件关联的javascript函数，如果这个函数是执行一个IO操作，比如侦听一下8888端口是否有Scoket链接，Node.js会启动这个IO操作，但是不会等待IO操作结束，而是继续到队列中查看是否有下一个事件，如果有，就处理这个事件。</p>
+<p>下面关键来了，花开两朵，各表一枝，那么最好还是要会合的，nodejs如何知道启动的IO操作是否执行，执行的结果如何呢？比如发现我们浏览器访问8888端口，这时IO操作侦听到一个请求，那么下一步应该执行上面的onRequest了，但是Nodejs管理的CPU正在做其他事情啊。</p>
+<p>这里，IO操作结束后会自己将一个执行原始回调函数的引用加入到事件队列中，也就是onRequest这个函数加入到事件队列中，NodeJS因为一直在轮询这个事件队列，会发现这个事件，执行事件的函数onRequest，完成用户的处理。</p>
+<p>我们前后两个代码，一个是将函数体代码写入http，另外一个是用onRequest替代这部分代码，这个onRequest很重要，可以作为一个事件放入事件队列中，而函数体这段代码是无法放入事件队列中的，而且无法被另外一个函数调用。</p>
+<h3 id="参考文章："><a href="#参考文章：" class="headerlink" title="参考文章："></a>参考文章：</h3><p>《好用的 HTTP模块SuperAgent》：<a href="http://www.jianshu.com/p/98b854322260" title="好用的 HTTP模块SuperAgent" target="_blank" rel="external">http://www.jianshu.com/p/98b854322260</a></p>
+<p>《使用 eventproxy 控制并发》：<a href="https://github.com/alsotang/node-lessons/tree/master/lesson4" title="《使用 eventproxy 控制并发》" target="_blank" rel="external">https://github.com/alsotang/node-lessons/tree/master/lesson4</a></p>
+<p>《使用 async 控制并发》：<a href="https://github.com/alsotang/node-lessons/tree/master/lesson5" title="《使用 async 控制并发》" target="_blank" rel="external">https://github.com/alsotang/node-lessons/tree/master/lesson5</a></p>
+<p>《NodeJs入门之事件驱动》：<a href="http://www.jdon.com/idea/nodejs/tutorial.html" title="NodeJs入门之事件驱动" target="_blank" rel="external">http://www.jdon.com/idea/nodejs/tutorial.html</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;这篇文章主要是记录在学习nodejs爬虫时学到的知识。学习过程主要是参照了这篇文章：&lt;br&gt;&lt;a href=&quot;https://github.com/chokcoco/cnblogsArticle/issues/7&quot; title=&quot;【nodeJS爬虫】前端爬虫系列 -- 小爬「博客园」&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/chokcoco/cnblogsArticle/issues/7&lt;/a&gt;，文章中对爬虫讲的很详细，对想要学习爬虫的同学会有帮助。&lt;/p&gt;
+&lt;h3 id=&quot;一、superagent&quot;&gt;&lt;a href=&quot;#一、superagent&quot; class=&quot;headerlink&quot; title=&quot;一、superagent&quot;&gt;&lt;/a&gt;一、superagent&lt;/h3&gt;&lt;p&gt;superagent是一款极好用的轻量级的更为优化的ajax API同时是nodejs模块，它专注于处理服务端/客户端的http请求，让你处理get,post,put,delete,head请求时更轻松。虽然有内置的http等模块进行请求的处理，但superagent更简单。来看看它们之间的对比：&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="Node.js" scheme="http://fanwalker.com/tags/Node-js/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>DOM学习</title>
+    <link href="http://fanwalker.com/2017/08/10/DOM%E5%AD%A6%E4%B9%A0/"/>
+    <id>http://fanwalker.com/2017/08/10/DOM学习/</id>
+    <published>2017-08-10T04:46:45.000Z</published>
+    <updated>2017-09-09T15:00:25.683Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="一、节点层次"><a href="#一、节点层次" class="headerlink" title="一、节点层次"></a>一、节点层次</h3><p> &nbsp;&nbsp;&nbsp;节点分为几种不同的类型，每种类型分别表示文档中不同的信息及标记,节点之间的关系构成了层次，文档节点是每个文档的根节点。节点之间的关系：<br><img src="http://i.imgur.com/2wKDqZc.png" alt=""></p>
+<a id="more"></a>
+<h4 id="操作节点"><a href="#操作节点" class="headerlink" title="操作节点"></a>操作节点</h4><p>常用的方法有:</p>
+<p>1、appendChild()：向childNodes列表的末尾添加一个节点，参数为要插入的节点，返回新增的节点；<br></p>
+<pre><code>var returnedNode = someNode.appendChild(newNode);
+alert(returnedNode == newNode);  //true
+alert(someNode.lastChild == newNode); //true
+</code></pre><p>2、insertBefore()：把节点放在childNodes列表中某个特定的位置上，接受两个参数：要插入的节点和作为参照的节点，如果参照节点是null，则与appendChild()执行效果相同；<br></p>
+<pre><code>//插入后成为最后一个子节点
+var returnedNode = someNode.insertBefore(newNode,null);
+alert(newNode == someNode.lastChild); //true
+
+//插入后成为第一个子节点
+var returnedNode = someNode.insertBefore(newNode,someNode.firstChild);
+alert(returnedNode == newNode); //true
+alert(newNode == someNode.firstChild); //true
+</code></pre><p>3、replaceChild()：替换节点，接受两个参数：要插入的节点和要替换的节点，要替换的节点将会被这个方法从这个文档树中移除，但被替换的节点还在文档中，只是在文档中已经没有了自己的位置；<br></p>
+<pre><code>//替换第一个节点
+var returnedNode = someNode.replaceChild(newNode,someNode.firstChild);
+</code></pre><p>4、removeChild()：移除节点，接受参数为要移除的节点；</p>
+<pre><code>//移除第一个子节点
+var returnedNode = someNode.removeChild(someNode.firstChild);
+alert(returnedNode == someNode.firstChild); //true
+</code></pre><h4 id="Document类型"><a href="#Document类型" class="headerlink" title="Document类型"></a>Document类型</h4><p>JavaScript通过Document类型表示文档，document对象是HTMLDocument的一个实例，HTMLDocument继承自Document类型，在浏览器中document对象表示整个HTML页面，document对象是window对象的一个属性，可以作为全局对象访问。</p>
+<p><strong>查找元素</strong></p>
+<p>getElementById()：接受一个参数:要取得元素id，区分大小写：</p>
+<pre><code>&lt;div id=&quot;mydiv&quot;&gt;Some text&lt;/div&gt;
+</code></pre><p>取得这个元素</p>
+<pre><code>var div = document.getElementById(&quot;mydiv&quot;);
+</code></pre><p>getElementsByTagName()：接受一个参数：要取得的元素标签名：</p>
+<pre><code>var images = document.getElementsByTagName(&quot;img&quot;);
+
+alert(images.length);//输出图像的数量
+
+alert(images[0].src);//输出第一个图像的src特性
+</code></pre><p>getElementsByName()：接受一个参数：要取得的元素的name特性：</p>
+<pre><code>&lt;div name=&quot;color&quot;&gt;Some text1&lt;/div&gt;
+
+&lt;div name=&quot;color&quot;&gt;Some text2&lt;/div&gt;
+
+&lt;div name=&quot;color&quot;&gt;Some text3&lt;/div&gt;
+</code></pre><p>取得“name=color”的元素：</p>
+<pre><code>var divs = document.getElementsByName(&quot;color&quot;);
+</code></pre><h4 id="Element类型"><a href="#Element类型" class="headerlink" title="Element类型"></a>Element类型</h4><p>Element类型可以理解为HTML元素，提供了元素标签名、子节点及特性的访问。</p>
+<p>HTML元素常用的特性有:id、title、className</p>
+<p>可以使用getAttribute()、setAttribute()和removeAttribute()方法操作元素特性，如：getAttribute(“id”)、setAttribute(“id”)、removeAttribute(“id”)</p>
+<p>使用document.createElement()创建元素，接受一个参数：要创建的元素的标签名，如：<br>    var div = document.createElement(“div”);</p>
+<h4 id="Text类型"><a href="#Text类型" class="headerlink" title="Text类型"></a>Text类型</h4><p>Text类型表示文本节点，创建文本节点：</p>
+<pre><code>var element = document.createElement(&quot;div&quot;);
+element.className = &quot;message&quot;;&lt;br&gt;
+var textNode = document.createTextNode(&quot;Hello World&quot;);
+element.appendChild(textNode);&lt;br&gt;
+document.body.appendChild(element);
+</code></pre><h3 id="二、Dom操作技术"><a href="#二、Dom操作技术" class="headerlink" title="二、Dom操作技术"></a>二、Dom操作技术</h3><h4 id="动态脚本"><a href="#动态脚本" class="headerlink" title="动态脚本"></a>动态脚本</h4><p>创建动态脚本有两种方法：</p>
+<p>1：插入外部JavaScript文件</p>
+<pre><code>&lt;script type-&quot;text/javascript&quot; src=&quot;client.js&quot;&gt;&lt;/script&gt;
+</code></pre><p>相应的DOM代码：</p>
+<pre><code>var script = document.createElement(&quot;script&quot;);
+script.type = &quot;text/jacascript&quot;;
+script.src = &quot;client.js&quot;;
+document.body.appendChild(script);
+</code></pre><p>2：直接插入JavaScript代码：</p>
+<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
+ function sayHi(){
+    alert(&quot;hi&quot;);}
+&lt;/script&gt;
+</code></pre><h4 id="动态样式"><a href="#动态样式" class="headerlink" title="动态样式"></a>动态样式</h4><p>页面加载完成后动态的将样式加载到页面中：</p>
+<pre><code>&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;styles.css&quot;&gt;
+</code></pre><p>相应的DOM代码：</p>
+<pre><code>var link = document.createElement(&quot;link&quot;);
+link.rel = &quot;stylesheet&quot;;
+link.type = &quot;text/css&quot;;
+link.href = &quot;style.css&quot;;
+var head = document.getElementsByTagName(&quot;head&quot;)[0];
+head.appendChild(link);
+</code></pre><p>直接插入样式：<br>    <style type="text/css"><br>        body{<br>        font-size:14px;<br>        }<br>    </style></p>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a><strong>小结</strong></h4><p>最基本的节点类型：Node，所有其他类型都继承自Node；<br>Document类型表示整个文档，document对象是Document的一个实例，使用document对象，有很多种方式可以查询和取得节点<br><br>Element节点可以用来操作HTML元素或XML元素的内容和特性。<br>DOM操作是JavaScript程序中开销最大的部分，而访问NodeList导致的问题最多，NodeList对象都是“动态的”，每次访问NodeList对象都会运行一次查询，所以，尽量减少DOM操作。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;一、节点层次&quot;&gt;&lt;a href=&quot;#一、节点层次&quot; class=&quot;headerlink&quot; title=&quot;一、节点层次&quot;&gt;&lt;/a&gt;一、节点层次&lt;/h3&gt;&lt;p&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;节点分为几种不同的类型，每种类型分别表示文档中不同的信息及标记,节点之间的关系构成了层次，文档节点是每个文档的根节点。节点之间的关系：&lt;br&gt;&lt;img src=&quot;http://i.imgur.com/2wKDqZc.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="html" scheme="http://fanwalker.com/tags/html/"/>
+    
+      <category term="JavaScript" scheme="http://fanwalker.com/tags/JavaScript/"/>
+    
+  </entry>
+  
+</feed>
