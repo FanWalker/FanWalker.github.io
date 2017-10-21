@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://fanwalker.com/"/>
-  <updated>2017-09-20T15:49:05.807Z</updated>
+  <updated>2017-10-21T15:38:41.171Z</updated>
   <id>http://fanwalker.com/</id>
   
   <author>
@@ -14,6 +14,58 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>JavaScript之正则表达式</title>
+    <link href="http://fanwalker.com/2017/10/21/JavaScript%E4%B9%8B%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
+    <id>http://fanwalker.com/2017/10/21/JavaScript之正则表达式/</id>
+    <published>2017-10-21T14:33:11.000Z</published>
+    <updated>2017-10-21T15:38:41.171Z</updated>
+    
+    <content type="html"><![CDATA[<p>正则表达式（英语：Regular Expression，在代码中常简写为regex、regexp或RE）使用单个字符串来描述、匹配一系列符合某个句法规则的字符串搜索模式。</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><pre><code>/正则表达式主体/修饰符(可选)
+</code></pre><p>实例：</p>
+<pre><code>var patt = /runoob/i
+</code></pre><p>/runoob/i  是一个正则表达式。runoob  是一个正则表达式主体 (用于检索)。i  是一个修饰符 (表示搜索不区分大小写)。</p>
+<a id="more"></a>
+<h3 id="创建一个正则表达式"><a href="#创建一个正则表达式" class="headerlink" title="创建一个正则表达式"></a>创建一个正则表达式</h3><p>1、使用一个正则表达式字面量：</p>
+<pre><code>/*
+   pattern/flags 
+*/
+
+const regex = /ab+c/;
+
+const regex = /^[a-zA-Z]+[0-9]*\W?_$/gi;/
+</code></pre><p>在加载脚本后，正则表达式字面值提供正则表达式的编译。当正则表达式保持不变时，使用此方法可获得更好的性能。</p>
+<p>2、调用RegExp对象的构造函数：</p>
+<pre><code>/* 
+    new RegExp(pattern , modifiers)  
+
+    //pattern（模式） 描述了表达式的模式,modifiers(修饰符) 用于指定全局匹配、区分大小写的匹配和多行匹配
+*/
+let regex = new RegExp(&quot;ab+c&quot;);
+let regex = new RegExp(/^[a-zA-Z]+[0-9]*\W?_$/, &quot;gi&quot;);
+let regex = new RegExp(&quot;^[a-zA-Z]+[0-9]*\\W?_$&quot;, &quot;gi&quot;);  //注意：当使用构造函数创造正则对象时，需要常规的字符转义规则（在前面加反斜杠 \）
+</code></pre><h3 id="编写一个正则表达式的模式"><a href="#编写一个正则表达式的模式" class="headerlink" title="编写一个正则表达式的模式"></a>编写一个正则表达式的模式</h3><h4 id="使用简单的模式"><a href="#使用简单的模式" class="headerlink" title="使用简单的模式"></a>使用简单的模式</h4><p>简单的模式是由简单字符串所构成的。比如，/abc/这个模式就匹配了在一个字符串中，仅仅字符 ‘abc’ 同时出现并按照这个顺序。</p>
+<h4 id="使用特殊字符"><a href="#使用特殊字符" class="headerlink" title="使用特殊字符"></a>使用特殊字符</h4><p>当你需要搜索一个比直接匹配需要更多条件的匹配时，比如寻找一个或多个 ‘b’，或者寻找空格，那么这时模式将要包含特殊字符。比如， 模式/ab*c/匹配了</p>
+<p>一个单独的 ‘a’ 后面跟了零个或者多个 ‘b’（*的意思是前面一项出现了零个或者多个），且后面跟着 ‘c’ 的任何字符组合。在字符串 “cbbabbbbcdebc” 中，这</p>
+<p>个模式匹配了子字符串 “abbbbc”。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;正则表达式（英语：Regular Expression，在代码中常简写为regex、regexp或RE）使用单个字符串来描述、匹配一系列符合某个句法规则的字符串搜索模式。&lt;/p&gt;
+&lt;h3 id=&quot;语法&quot;&gt;&lt;a href=&quot;#语法&quot; class=&quot;headerlink&quot; title=&quot;语法&quot;&gt;&lt;/a&gt;语法&lt;/h3&gt;&lt;pre&gt;&lt;code&gt;/正则表达式主体/修饰符(可选)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;实例：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;var patt = /runoob/i
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;/runoob/i  是一个正则表达式。runoob  是一个正则表达式主体 (用于检索)。i  是一个修饰符 (表示搜索不区分大小写)。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="JavaScript" scheme="http://fanwalker.com/tags/JavaScript/"/>
+    
+  </entry>
   
   <entry>
     <title>自适应网页设计</title>

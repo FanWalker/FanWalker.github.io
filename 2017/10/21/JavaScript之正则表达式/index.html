@@ -6,20 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://fanwalker.com">
-  <title>自适应网页设计 | FanWalker&#39;s blog</title>
+  <title>JavaScript之正则表达式 | FanWalker&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="自适应网页设计：让同一张网页自动适应不同大小的屏幕，根据屏幕宽度，自动调整布局的设计。 一、viewport元标签在网页代码的头部，加入一行viewport元标签。 &amp;lt;meta name=&amp;quot;viewport&amp;quot; content=&amp;quot;width=device-width, initial-scale=1&amp;quot; /&amp;gt; 代码意思是网页宽度默认等于设备的屏幕宽度">
-<meta name="keywords" content="css">
+  <meta name="description" content="正则表达式（英语：Regular Expression，在代码中常简写为regex、regexp或RE）使用单个字符串来描述、匹配一系列符合某个句法规则的字符串搜索模式。 语法/正则表达式主体/修饰符(可选) 实例： var patt = /runoob/i /runoob/i  是一个正则表达式。runoob  是一个正则表达式主体 (用于检索)。i  是一个修饰符 (表示搜索不区分大小写)。">
+<meta name="keywords" content="JavaScript">
 <meta property="og:type" content="article">
-<meta property="og:title" content="自适应网页设计">
-<meta property="og:url" content="http://fanwalker.com/2017/09/20/自适应网页设计/index.html">
+<meta property="og:title" content="JavaScript之正则表达式">
+<meta property="og:url" content="http://fanwalker.com/2017/10/21/JavaScript之正则表达式/index.html">
 <meta property="og:site_name" content="FanWalker&#39;s blog">
-<meta property="og:description" content="自适应网页设计：让同一张网页自动适应不同大小的屏幕，根据屏幕宽度，自动调整布局的设计。 一、viewport元标签在网页代码的头部，加入一行viewport元标签。 &amp;lt;meta name=&amp;quot;viewport&amp;quot; content=&amp;quot;width=device-width, initial-scale=1&amp;quot; /&amp;gt; 代码意思是网页宽度默认等于设备的屏幕宽度">
+<meta property="og:description" content="正则表达式（英语：Regular Expression，在代码中常简写为regex、regexp或RE）使用单个字符串来描述、匹配一系列符合某个句法规则的字符串搜索模式。 语法/正则表达式主体/修饰符(可选) 实例： var patt = /runoob/i /runoob/i  是一个正则表达式。runoob  是一个正则表达式主体 (用于检索)。i  是一个修饰符 (表示搜索不区分大小写)。">
 <meta property="og:locale" content="中文">
-<meta property="og:updated_time" content="2017-09-20T15:49:05.807Z">
+<meta property="og:updated_time" content="2017-10-21T15:38:41.171Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="自适应网页设计">
-<meta name="twitter:description" content="自适应网页设计：让同一张网页自动适应不同大小的屏幕，根据屏幕宽度，自动调整布局的设计。 一、viewport元标签在网页代码的头部，加入一行viewport元标签。 &amp;lt;meta name=&amp;quot;viewport&amp;quot; content=&amp;quot;width=device-width, initial-scale=1&amp;quot; /&amp;gt; 代码意思是网页宽度默认等于设备的屏幕宽度">
+<meta name="twitter:title" content="JavaScript之正则表达式">
+<meta name="twitter:description" content="正则表达式（英语：Regular Expression，在代码中常简写为regex、regexp或RE）使用单个字符串来描述、匹配一系列符合某个句法规则的字符串搜索模式。 语法/正则表达式主体/修饰符(可选) 实例： var patt = /runoob/i /runoob/i  是一个正则表达式。runoob  是一个正则表达式主体 (用于检索)。i  是一个修饰符 (表示搜索不区分大小写)。">
   
     <link rel="alternative" href="/atom.xml" title="FanWalker&#39;s blog" type="application/atom+xml">
   
@@ -141,153 +141,54 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-自适应网页设计" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-JavaScript之正则表达式" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      自适应网页设计
+      JavaScript之正则表达式
     </h1>
   
 
         
-        <a href="/2017/09/20/自适应网页设计/" class="archive-article-date">
-  	<time datetime="2017-09-20T13:24:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-20</time>
+        <a href="/2017/10/21/JavaScript之正则表达式/" class="archive-article-date">
+  	<time datetime="2017-10-21T14:33:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-21</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>自适应网页设计：让同一张网页自动适应不同大小的屏幕，根据屏幕宽度，自动调整布局的设计。</p>
-<h2 id="一、viewport元标签"><a href="#一、viewport元标签" class="headerlink" title="一、viewport元标签"></a>一、viewport元标签</h2><p>在网页代码的头部，加入一行viewport元标签。</p>
-<pre><code>&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot; /&gt;
-</code></pre><p>代码意思是网页宽度默认等于设备的屏幕宽度，原始缩放比例为1.0，即网页的初始大小占屏幕的100%。</p>
+        <p>正则表达式（英语：Regular Expression，在代码中常简写为regex、regexp或RE）使用单个字符串来描述、匹配一系列符合某个句法规则的字符串搜索模式。</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><pre><code>/正则表达式主体/修饰符(可选)
+</code></pre><p>实例：</p>
+<pre><code>var patt = /runoob/i
+</code></pre><p>/runoob/i  是一个正则表达式。runoob  是一个正则表达式主体 (用于检索)。i  是一个修饰符 (表示搜索不区分大小写)。</p>
 <a id="more"></a>
-<p>viewport设置属性如下：</p>
-<blockquote>
-<p>width：网页宽度，可设定数值或指定为device-width；</p>
-<p>height：网页高度，可设定数值或指定为device-height；</p>
-<p>initial-scale：第一次进入页面的初始比例；</p>
-<p>minimum-scale：允许缩小最小比例；</p>
-<p>maximum-scale：允许放大最大比例；</p>
-<p>user-scalable：是否允许使用者缩放，值为1或0（yes or no）</p>
-</blockquote>
-<p>编译过程中会转化成如下语义：</p>
-<pre><code>@viewport {
-    width: device-width;
-    initial-scale: 1.0
-}
-</code></pre><p>对于老式浏览器（IE6、7、8）：</p>
-<pre><code>&lt;!--[if lt IE 9]&gt;
-&lt;script src=&quot;http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js&quot;&gt;&lt;/script&gt;
-&lt;![endif]--&gt;
-</code></pre><h2 id="二、不要使用绝对宽度"><a href="#二、不要使用绝对宽度" class="headerlink" title="二、不要使用绝对宽度"></a>二、不要使用绝对宽度</h2><p>为了让网页根据屏幕宽度调整布局，不要使用绝对宽度的元素，如：</p>
-<pre><code>width: 100px;
-</code></pre><p>使用百分比宽度，如：</p>
-<pre><code>width: 50%  （或 width: auto）
-</code></pre><h2 id="三、相对大小的字体"><a href="#三、相对大小的字体" class="headerlink" title="三、相对大小的字体"></a>三、相对大小的字体</h2><p>字体使用相对大小（em）。</p>
-<pre><code>body{
-    font: normal 100% Helvetica, Arial, sans-serif;
-}
-</code></pre><p>上面代码指定，字体大小是页面默认大小的100%，即16像素。</p>
-<pre><code>h1 {
-　  font-size: 1.5em; 
-}
-</code></pre><p>h1的大小是默认大小的1.5倍，即16*1.5=24像素</p>
-<pre><code>small {
-　　font-size: 0.875em;
-}
-</code></pre><p>small元素的大小是默认大小的0.875倍，即14像素（16*0.875）。</p>
-<p><strong>这里顺便补一下CSS单位px、pt、em、rem、vh、vw、vmin、vmax，因为在今年欢聚时代的校招笔试中也考到了</strong></p>
-<h3 id="px"><a href="#px" class="headerlink" title="px"></a>px</h3><p>为像素单位。是屏幕上显示数据的最基本的点。</p>
-<h3 id="pt"><a href="#pt" class="headerlink" title="pt"></a>pt</h3><p>pt是point，是印刷行业常用单位，等于1/72英寸。</p>
-<h3 id="em"><a href="#em" class="headerlink" title="em"></a>em</h3><p>相对单位，基准点为父节点字体的大小，如果自身定义了font-size按自身来计算（浏览器默认字体是16px）。如当前对行内文本的字体尺寸未被人为设置，</p>
-<p>则相对于浏览器的默认字体尺寸。所有未经调整的浏览器都符合: 1em=16px。那么12px=0.75em,10px=0.625em。</p>
-<p><strong>简化font-size的换算</strong>：需要在css中的body选择器中声明Font-size=62.5%，这就使em值变为 16px*62.5%=10px, 这样12px=1.2em, 10px=1em, 也就是说</p>
-<p>只需要将你的原来的px数值除以10，然后换上em作为单位就行了。</p>
-<h3 id="rem"><a href="#rem" class="headerlink" title="rem"></a>rem</h3><p>相对单位，可理解为“root em”, 相对根节点html的字体大小来计算，CSS3新加属性，chrome/firefox/IE9+支持。相对于当前对象内文本的字体尺寸。</p>
-<pre><code>&lt;body&gt;
-&lt;div class=&quot;div1&quot;&gt;
-    &lt;div class=&quot;div2&quot;&gt;
-          &lt;div class=&quot;div3&quot;&gt;div3&lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;/body&gt;
-</code></pre><p>样式：</p>
-<pre><code>.div3{
-    font-size:1.5rem;
-}
-</code></pre><p>此时div3的font-size =  1.5  *  （html的font-size）</p>
-<h3 id="vh和vw"><a href="#vh和vw" class="headerlink" title="vh和vw"></a>vh和vw</h3><p>vw：viewpoint width，视窗宽度，1vw等于视窗宽度的1%。</p>
-<p>vh：viewpoint height，视窗高度，1vh等于视窗高度的1%。</p>
-<p>如：</p>
-<pre><code>浏览器高度900px，宽度为750px
+<h3 id="创建一个正则表达式"><a href="#创建一个正则表达式" class="headerlink" title="创建一个正则表达式"></a>创建一个正则表达式</h3><p>1、使用一个正则表达式字面量：</p>
+<pre><code>/*
+   pattern/flags 
+*/
 
-1 vh = 900px * 1% = 9 px，1vw = 750px * 1% = 7.5 px。
-</code></pre><p>这样就很容易实现与同屏幕等高的框：</p>
-<pre><code>.slide { height: 100vh;} 
-</code></pre><p>设置一个和屏幕同宽的标题，</p>
-<pre><code>h1{font-size:100vw}
-</code></pre><p>那标题的字体大小就会自动根据浏览器的宽度进行缩放，以达到字体和viewport大小同步的效果。</p>
-<h3 id="vmin-和-vmax"><a href="#vmin-和-vmax" class="headerlink" title="vmin 和 vmax"></a>vmin 和 vmax</h3><p>vmin：vw和vh中较小的那个。</p>
-<p>vmax：vw和vh中较大的那个。</p>
-<p>比如，浏览器的宽度设置为</p>
-<pre><code>width:1200px;
-height:800px; 
-1vmax = 1200/100px = 12px;
-1vmin = 800/100px = 8px;
-</code></pre><p>如果:</p>
-<pre><code>width:600px;
-height:1080px;
- 1vmin就等于6px, 1vmax则为10.8px。
-</code></pre><p>有一个元素，你需要让它始终在屏幕上可见：</p>
-<pre><code>.box { 
-    height: 100vmin; 
-    width: 100vmin;
-}
-</code></pre><p>如果你要让这个元素始终铺满整个视口的可见区域：</p>
-<pre><code>.box { 
-    height: 100vmax; 
-    width: 100vmax;
-}
-</code></pre><h2 id="四、流动布局"><a href="#四、流动布局" class="headerlink" title="四、流动布局"></a>四、流动布局</h2><p>流动布局中各个区块的位置都是浮动的。</p>
-<pre><code>.main { float: right; width: 70%; } 
+const regex = /ab+c/;
 
-.leftBar { float: left; width: 25%; } 
-</code></pre><p>如果宽度太小，放不下两个元素，后面的元素会自动滚动到前面元素的下方，不会在水平方向overflow（溢出），避免了水平滚动条的出现。</p>
-<h2 id="五、选择加载CSS"><a href="#五、选择加载CSS" class="headerlink" title="五、选择加载CSS"></a>五、选择加载CSS</h2><p>运用 Css3 <a href="https://www.w3.org/TR/CSS21/media.html" target="_blank" rel="external">Media Queries</a>，根据不同的屏幕分辨率，选择应用不同的CSS规则：</p>
-<pre><code>&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot;
-　　　　media=&quot;screen and (max-device-width: 400px)&quot;
-　　　　href=&quot;tinyScreen.css&quot; /&gt;
-     }
-</code></pre><p>上面的代码意思是，如果屏幕宽度小于400像素（max-device-width: 400px），就加载tinyScreen.css文件，</p>
-<pre><code>&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot;
-　　　　media=&quot;screen and (min-width: 400px) and (max-device-width: 600px)&quot;
-　　　　href=&quot;smallScreen.css&quot; /&gt;
-</code></pre><p>如果屏幕宽度在400像素到600像素之间，则加载smallScreen.css文件。</p>
-<p>除了用html标签加载CSS文件，还可以在现有CSS文件中加载。</p>
-<pre><code>@import url(&quot;tinyScreen.css&quot;) screen and (max-device-width: 400px);
-</code></pre><h2 id="六、CSS的-media规则"><a href="#六、CSS的-media规则" class="headerlink" title="六、CSS的@media规则"></a>六、CSS的@media规则</h2><p>同一个CSS文件中，也可以根据不同的屏幕分辨率，选择应用不同的CSS规则。</p>
-<pre><code>@media screen and (max-device-width: 400px) {
-　　.column {
-　　　　float: none;
-　　　　width:auto;
-　　　}
-　　#sidebar {
-　　　　display:none;
-　　}
-}
-</code></pre><p>如果屏幕宽度小于400像素，则column块取消浮动（float:none）、宽度自动调节（width:auto），sidebar块不显示（display:none）。</p>
-<h2 id="七、图片自适应"><a href="#七、图片自适应" class="headerlink" title="七、图片自适应"></a>七、图片自适应</h2><pre><code>img { max-width: 100%;}
-</code></pre><p>老版本的IE</p>
-<pre><code>img { width: 100%;}
-</code></pre><h2 id="学习参考文章："><a href="#学习参考文章：" class="headerlink" title="学习参考文章："></a>学习参考文章：</h2><p><a href="http://www.ruanyifeng.com/blog/2012/05/responsive_web_design.html" target="_blank" rel="external">自适应网页设计（Responsive Web Design）</a></p>
-<p><a href="http://www.alloyteam.com/2015/04/zi-shi-ying-she-ji-yu-xiang-ying-shi-wang-ye-she-ji-qian-tan/" target="_blank" rel="external">自适应设计与响应式网页设计</a></p>
-<p><a href="http://blog.csdn.net/javaloveiphone/article/details/51120476" target="_blank" rel="external">搞清楚CSS单位px、em、rem、vh、vw、vmin、vmax</a></p>
-<p><a href="https://banyaner.github.io/h5/html5/2015/08/05/Rem.html" target="_blank" rel="external">px,em,rem,vh,vw,vmin,vmax的区别及移动端字体自适应问题</a></p>
+const regex = /^[a-zA-Z]+[0-9]*\W?_$/gi;/
+</code></pre><p>在加载脚本后，正则表达式字面值提供正则表达式的编译。当正则表达式保持不变时，使用此方法可获得更好的性能。</p>
+<p>2、调用RegExp对象的构造函数：</p>
+<pre><code>/* 
+    new RegExp(pattern , modifiers)  
+
+    //pattern（模式） 描述了表达式的模式,modifiers(修饰符) 用于指定全局匹配、区分大小写的匹配和多行匹配
+*/
+let regex = new RegExp(&quot;ab+c&quot;);
+let regex = new RegExp(/^[a-zA-Z]+[0-9]*\W?_$/, &quot;gi&quot;);
+let regex = new RegExp(&quot;^[a-zA-Z]+[0-9]*\\W?_$&quot;, &quot;gi&quot;);  //注意：当使用构造函数创造正则对象时，需要常规的字符转义规则（在前面加反斜杠 \）
+</code></pre><h3 id="编写一个正则表达式的模式"><a href="#编写一个正则表达式的模式" class="headerlink" title="编写一个正则表达式的模式"></a>编写一个正则表达式的模式</h3><h4 id="使用简单的模式"><a href="#使用简单的模式" class="headerlink" title="使用简单的模式"></a>使用简单的模式</h4><p>简单的模式是由简单字符串所构成的。比如，/abc/这个模式就匹配了在一个字符串中，仅仅字符 ‘abc’ 同时出现并按照这个顺序。</p>
+<h4 id="使用特殊字符"><a href="#使用特殊字符" class="headerlink" title="使用特殊字符"></a>使用特殊字符</h4><p>当你需要搜索一个比直接匹配需要更多条件的匹配时，比如寻找一个或多个 ‘b’，或者寻找空格，那么这时模式将要包含特殊字符。比如， 模式/ab*c/匹配了</p>
+<p>一个单独的 ‘a’ 后面跟了零个或者多个 ‘b’（*的意思是前面一项出现了零个或者多个），且后面跟着 ‘c’ 的任何字符组合。在字符串 “cbbabbbbcdebc” 中，这</p>
+<p>个模式匹配了子字符串 “abbbbc”。</p>
 
       
 
@@ -322,7 +223,7 @@ height:1080px;
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">css</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">JavaScript</a>
         		</li>
       		
 		</ul>
@@ -378,7 +279,7 @@ height:1080px;
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=http://fanwalker.com/2017/09/20/自适应网页设计/" alt="微信分享二维码">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://fanwalker.com/2017/10/21/JavaScript之正则表达式/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -392,18 +293,9 @@ height:1080px;
   
 <nav id="article-nav">
   
-    <a href="/2017/10/21/JavaScript之正则表达式/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          JavaScript之正则表达式
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/09/10/浅谈CORS跨域资源共享/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">浅谈CORS跨域资源共享</div>
+    <a href="/2017/09/20/自适应网页设计/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">自适应网页设计</div>
       <i class="icon-circle-right"></i>
     </a>
   
