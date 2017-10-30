@@ -6,18 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://fanwalker.com">
-  <title>Archives | FanWalker&#39;s blog</title>
+  <title>高性能网站建设指南学习总结 | FanWalker&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="知识管理，时间管理，自我管理，阅读">
-<meta property="og:type" content="website">
-<meta property="og:title" content="FanWalker&#39;s blog">
-<meta property="og:url" content="http://fanwalker.com/archives/page/2/index.html">
+  <meta name="description" content="这篇总结是对高性能网站建设指南书籍做出的，以巩固所学知识。书中共介绍了14条提升性能的规则，在介绍这14条规则前，书本还提到了一种法则，叫做 性能黄金法则。 性能黄金法则只有10%~20%的最终用户响应时间花在了下载html文档上，其余的80%~90%时间花在了下载页面中的所有组件上。 规则1—– 减少HTTP请求性能黄金法则中说到最终用户响应时间的80%~90%是花在HTML文档所引用的所有组件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高性能网站建设指南学习总结">
+<meta property="og:url" content="http://fanwalker.com/2017/10/30/高性能网站建设学习/index.html">
 <meta property="og:site_name" content="FanWalker&#39;s blog">
-<meta property="og:description" content="知识管理，时间管理，自我管理，阅读">
+<meta property="og:description" content="这篇总结是对高性能网站建设指南书籍做出的，以巩固所学知识。书中共介绍了14条提升性能的规则，在介绍这14条规则前，书本还提到了一种法则，叫做 性能黄金法则。 性能黄金法则只有10%~20%的最终用户响应时间花在了下载html文档上，其余的80%~90%时间花在了下载页面中的所有组件上。 规则1—– 减少HTTP请求性能黄金法则中说到最终用户响应时间的80%~90%是花在HTML文档所引用的所有组件">
 <meta property="og:locale" content="中文">
+<meta property="og:updated_time" content="2017-10-30T14:32:08.533Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="FanWalker&#39;s blog">
-<meta name="twitter:description" content="知识管理，时间管理，自我管理，阅读">
+<meta name="twitter:title" content="高性能网站建设指南学习总结">
+<meta name="twitter:description" content="这篇总结是对高性能网站建设指南书籍做出的，以巩固所学知识。书中共介绍了14条提升性能的规则，在介绍这14条规则前，书本还提到了一种法则，叫做 性能黄金法则。 性能黄金法则只有10%~20%的最终用户响应时间花在了下载html文档上，其余的80%~90%时间花在了下载页面中的所有组件上。 规则1—– 减少HTTP请求性能黄金法则中说到最终用户响应时间的80%~90%是花在HTML文档所引用的所有组件">
   
     <link rel="alternative" href="/atom.xml" title="FanWalker&#39;s blog" type="application/atom+xml">
   
@@ -139,181 +140,222 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-高性能网站建设学习" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      高性能网站建设指南学习总结
+    </h1>
+  
+
+        
+        <a href="/2017/10/30/高性能网站建设学习/" class="archive-article-date">
+  	<time datetime="2017-10-30T12:08:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-30</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这篇总结是对高性能网站建设指南书籍做出的，以巩固所学知识。书中共介绍了14条提升性能的规则，在介绍这14条规则前，书本还提到了一种法则，叫做</p>
+<p>性能黄金法则。</p>
+<h2 id="性能黄金法则"><a href="#性能黄金法则" class="headerlink" title="性能黄金法则"></a>性能黄金法则</h2><p>只有10%~20%的最终用户响应时间花在了下载html文档上，其余的80%~90%时间花在了下载页面中的所有组件上。</p>
+<h2 id="规则1—–-减少HTTP请求"><a href="#规则1—–-减少HTTP请求" class="headerlink" title="规则1—– 减少HTTP请求"></a>规则1—– 减少HTTP请求</h2><p>性能黄金法则中说到最终用户响应时间的80%~90%是花在HTML文档所引用的所有组件（图片、脚本、样式表、Flash等）的HTTP请求上，因此减少HTTP</p>
+<p>请求数量是提升性能的最简单途径。减少HTTP请求的方法有：</p>
+<a id="more"></a>
+<h4 id="图片地图"><a href="#图片地图" class="headerlink" title="图片地图"></a>图片地图</h4><p>使用<strong>图片地图</strong>（Image Map）在一个图片上关联多个url，目标url的选择取决于用户点击了图片上的哪个位置，比如，本来五个图片关联五个url，现在将这五个</p>
+<p>图片合并成一张图片上，这样就减少了四个HTTP请求。</p>
+<p>缺点：</p>
+<ul>
+<li>手工很难定义图片地图上的区域坐标；</li>
+<li>除了矩形之外几乎无法定义其他形状；</li>
+<li>通过DHTML创建的图片地图在Internet Explorer中无法工作</li>
+</ul>
+<h4 id="CSS-Sprites"><a href="#CSS-Sprites" class="headerlink" title="CSS Sprites"></a>CSS Sprites</h4><p>CSS Sprites将多幅图片合并为一幅单独的图片，然后利用background-position进行定位显示特定图片，原理是借由减少下载图像文件数量，提高网页的显</p>
+<p>示性能。</p>
+<p>优点：</p>
+<ul>
+<li>通过合并图片减少HTTP请求，比图片地图更灵活，因为CSS Sprites没有限制图片必须是连续的；</li>
+<li>降低了下载量，合并的图片比分离的图片的总和要小，因为它降低了图片自身的开销（颜色表、格式信息、等等）；</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>后期修改麻烦，难以维护，牵一发动全身，没有之前改一个图片就好了容易</li>
+</ul>
+<h4 id="内联图片（Inline-Images）"><a href="#内联图片（Inline-Images）" class="headerlink" title="内联图片（Inline Images）"></a>内联图片（Inline Images）</h4><p>通过使用 <code>data:url</code> 模式 是web页面中包含图片，无需额外的HTTP请求。但Internet Explorer不支持这种方式。</p>
+<blockquote>
+<p>格式： <code>data:[&lt;mediatype][;base64],&lt;data&gt;</code></p>
+<p>一般的写法：<code>&lt;img src=&quot;http://blog.xmaoseo.com/images/xmaoseo.jpg&quot;/&gt;</code></p>
+<p>内联图片写法： <code>&lt;img src=&quot;data:image/png;base64,iVBOR....&gt;</code></p>
+</blockquote>
+<p>这里的<code>iVBOR....</code>是base64编码，还有<code>data:url</code>模式的缺陷是IE不支持，另一个可能存在数据大小上的限制，Firefox1.5可以支持高达100kb的内联图片。<br>Base64编码会增加图片的大小，因此整体下载量会增加。</p>
+<p>这种模式下，在跨越不同页面时不会被缓存，不要去内联较大的图片，因为编码后会导致页面变大。好的做法是使用CSS并将内联图片作为背景。将该<br>CSS规则放在外部样式表中，数据可以缓存在样式表内部</p>
+<p>使用PHP函数可以获取图片的base64编码，例子：</p>
+<pre><code>.home{background-image: url(data:image/gif;base64,
+  &lt;?php echo base64_encode(file_get_contents(&quot;../image/home.gif&quot;)) ?&gt;)}
+</code></pre><h4 id="合并脚本和样式表"><a href="#合并脚本和样式表" class="headerlink" title="合并脚本和样式表"></a>合并脚本和样式表</h4><p>根据模块化原则， 我们应该将代码放到多个小文件中，但是这样会降低性能，因为每个文件都会导致一个额外的http请求。理想情况，一个页面不应该使用</p>
+<p>多余一个的脚本和样式表。建议多个脚本合并为一个脚本，多个样式表也应该合并为一个样式表。</p>
+<h2 id="规则2-—–-使用内容发布网络-（Use-a-Content-Delivery-Network）"><a href="#规则2-—–-使用内容发布网络-（Use-a-Content-Delivery-Network）" class="headerlink" title="规则2 —– 使用内容发布网络 （Use a Content Delivery Network）"></a>规则2 —– 使用内容发布网络 （Use a Content Delivery Network）</h2><p>内容分发网络（conten delivery network）是一组分布在多个不同地理位置的Web服务器。用于更加有效地向用户发布网络。</p>
+<p>CDN优点：</p>
+<blockquote>
+<p>缩短相应时间，备份扩展存储能力和进行缓存，缓和WEB流量峰值压力(获取天气，娱乐体育新闻等等)</p>
+</blockquote>
+<p>CDN缺点：</p>
+<blockquote>
+<p>你的响应时间会受到其他网站——甚至是竞争对手的流量的影响。无法控制组件服务器所带来的特殊麻烦。比如，修改HHTP表头必须由服务提供商来完成。</p>
+</blockquote>
+<p>CDN用于发布静态图片（将所有静态组件转移到CDN），图片，脚本样式表，Flash，静态文件更易存储，有较少的依赖性。</p>
+<h2 id="规则3-—–-添加Expires头"><a href="#规则3-—–-添加Expires头" class="headerlink" title="规则3 —– 添加Expires头"></a>规则3 —– 添加Expires头</h2><p>web页面都包含了大量的组件，并且其数量在不断增长，页面的初访者会进行很多HTTP请求，但通过使用一个长久的Expires头，可以使这些组件被缓存。</p>
+<p>这会在后续的页面浏览中避免不必要的HTTP请求。长久的Expires头常用于图片，但应将其用在包括脚本、样式表和Flash等所有组件上。</p>
+<h4 id="Expires头"><a href="#Expires头" class="headerlink" title="Expires头"></a>Expires头</h4><p>Web服务器使用Expires头来告诉web客服端它可以使用一个组件的当前副本，直到指定的时间为止。例子：</p>
+<pre><code>Expires: Mon, 15 Apr 2024 20:00:00 GMT
+</code></pre><p>它告诉浏览器该响应的有效期持续到2024年4月15日为止。</p>
+<h4 id="Max-Age-和-mod-expires"><a href="#Max-Age-和-mod-expires" class="headerlink" title="Max-Age 和 mod_expires"></a>Max-Age 和 mod_expires</h4><p>Expires头的使用要求服务器和客户端的时钟要严格同步，另外，过期日期需要经常检查，并且一旦未来这一天到来了，还需要在服务器配置中提供一个新的<br>日期。HTTP1.1引入了Cache-Control头来克服这个限制。</p>
+<p>Cache-Control使用max-age指令指定组件被缓存多久。以秒为单位定义一个更新窗。</p>
+<p>Expires和Cache-Control max-age两者同时出现，max-age指令将重写Expires头。</p>
+<p>mod_expires Apache模块可以使你通过ExpirsDefault指令以相对方式设置日期。</p>
+<blockquote>
+<p>ExpirsDefault ‘access plus 10 years’</p>
+</blockquote>
+<p>时间可以设置为年月日时分秒。它同时向响应中发送Expires头和max-age头。实际过期日期根据何时得到请求而变，但是max-age有优先权。时钟同步问题<br>和固定日期更新不用担心了。</p>
+<h4 id="空缓存vs完整缓存"><a href="#空缓存vs完整缓存" class="headerlink" title="空缓存vs完整缓存"></a>空缓存vs完整缓存</h4><p>用户第一次访问你的网站时，它不会对HTTP请求的熟练产生任何影响。此时浏览器的缓存是空的。因此，其性能的改进取决于用户在访问你的页面时是否有<br>完整的缓存，使你的组件可缓存可以改善这些用户的响应时间。</p>
+<p>在那些每日一次一更新的网站，带有完整缓存的页面浏览百分比很少。旅游网站，email网站中每个用户会话可能产生多次页面浏览，百分比就高。<br>只要用户每个月至少访问一次，或者每次会话产生多次页面浏览，完整缓存就很有用，使用长久Expires就很有必要。</p>
+<h4 id="不仅仅是图片"><a href="#不仅仅是图片" class="headerlink" title="不仅仅是图片"></a>不仅仅是图片</h4><p>为图片使用长久的Expires头非常之普遍，但不仅限于图片，长久的Expires头应该包含任何不经常变化的组件，包括脚本、样式表和Flash组件。但是HTML<br>文档不应该使用，因为包含动态内容，每次都要更新。</p>
+<p>大型网站，图片，样式表，脚本大部分都要缓存30天以上。但是经常需要变化的新闻图片等等，不应该使用。我们可以查看Last-Modifed中的值来看改变时<br>间以及频率。</p>
+<h4 id="修订文件名"><a href="#修订文件名" class="headerlink" title="修订文件名"></a>修订文件名</h4><blockquote>
+<p>使用长久的Expires缺点是 ：浏览器不会检查任何更新，直到过了过期日期。即使在服务器上更新了组件，浏览器因为缓存也不能获得最新组件。</p>
+</blockquote>
+<p>为了确保用户能获得更新过的组件，需要在所有HTML页面中修改组件的文件名。最有效的解决方案是修改其所有链接，这样。全新的请求将从原始服务器<br>下载最新的内容。</p>
+<p>使用php等动态语言生成HTML页将很简单，为所有组件的文件名使用变量，使用这种方法，在页面中更新文件名只需要简单地在某个地方修改变量。Yahoo<br>经常将这一步作为生成过程的一部分——版本号嵌入在组件的文件名中（例如yahoo_2.0.6.js），而且在全局映射中修订过的文件名会自动更新。嵌入版本<br>号不仅可以改变文件名，还能在调试中更容易找到准确的源代码文件。</p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/08/30/JavaScript之命名函数表达式/" class="archive-article-date">
-  	<time datetime="2017-08-30T12:03:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-30</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/08/30/JavaScript之命名函数表达式/">JavaScript之命名函数表达式</a>
-    </h1>
-  
+      
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">JavaScript</a>
-        		</li>
-      		
-		</ul>
-	</div>
+      
 
-          
-
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://fanwalker.com/2017/10/30/高性能网站建设学习/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/08/25/JavaScript之原型和原型链/" class="archive-article-date">
-  	<time datetime="2017-08-25T13:23:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-25</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2017/10/21/JavaScript之正则表达式/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">JavaScript之正则表达式</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/08/25/JavaScript之原型和原型链/">JavaScript之原型和原型链</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">JavaScript</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/08/22/JavaScript中的this/" class="archive-article-date">
-  	<time datetime="2017-08-22T07:04:08.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-22</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/08/22/JavaScript中的this/">JavaScript中的this</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">JavaScript</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/08/20/websocket实现简单聊天程序/" class="archive-article-date">
-  	<time datetime="2017-08-20T09:06:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-20</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/08/20/websocket实现简单聊天程序/">websocket实现简单聊天程序</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">websocket</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">node.js</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/">&laquo; Prev</a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/page/3/">3</a><a class="extend next" rel="next" href="/archives/page/3/">Next &raquo;</a>
-    </nav>
   
 
 
@@ -337,8 +379,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
