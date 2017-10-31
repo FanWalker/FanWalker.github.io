@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://fanwalker.com/"/>
-  <updated>2017-10-30T14:32:08.533Z</updated>
+  <updated>2017-10-31T15:07:40.683Z</updated>
   <id>http://fanwalker.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://fanwalker.com/2017/10/30/%E9%AB%98%E6%80%A7%E8%83%BD%E7%BD%91%E7%AB%99%E5%BB%BA%E8%AE%BE%E5%AD%A6%E4%B9%A0/"/>
     <id>http://fanwalker.com/2017/10/30/高性能网站建设学习/</id>
     <published>2017-10-30T12:08:36.000Z</published>
-    <updated>2017-10-30T14:32:08.533Z</updated>
+    <updated>2017-10-31T15:07:40.683Z</updated>
     
     <content type="html"><![CDATA[<p>这篇总结是对高性能网站建设指南书籍做出的，以巩固所学知识。书中共介绍了14条提升性能的规则，在介绍这14条规则前，书本还提到了一种法则，叫做</p>
 <p>性能黄金法则。</p>
@@ -92,7 +92,35 @@
 </blockquote>
 <p>为了确保用户能获得更新过的组件，需要在所有HTML页面中修改组件的文件名。最有效的解决方案是修改其所有链接，这样。全新的请求将从原始服务器<br>下载最新的内容。</p>
 <p>使用php等动态语言生成HTML页将很简单，为所有组件的文件名使用变量，使用这种方法，在页面中更新文件名只需要简单地在某个地方修改变量。Yahoo<br>经常将这一步作为生成过程的一部分——版本号嵌入在组件的文件名中（例如yahoo_2.0.6.js），而且在全局映射中修订过的文件名会自动更新。嵌入版本<br>号不仅可以改变文件名，还能在调试中更容易找到准确的源代码文件。</p>
-]]></content>
+<h2 id="规则4-—–-压缩组件"><a href="#规则4-—–-压缩组件" class="headerlink" title="规则4 —– 压缩组件"></a>规则4 —– 压缩组件</h2><p>规则1–3都是限制不必要的HTTP请求来减少响应时间，现在我们通过减少响应大小来减少响应时间。</p>
+<h4 id="压缩是如何工作的"><a href="#压缩是如何工作的" class="headerlink" title="压缩是如何工作的"></a>压缩是如何工作的</h4><p>Web客户端可以通过HTTP请求中的Accept-Encoding头来表示对压缩的支持</p>
+<blockquote>
+<p>Accept-Encoding: gzip,deflate</p>
+</blockquote>
+<p>Web服务器看到请求中有这个头，就会使用客户端列出来的方法中的一种来压缩响应。Web服务器通过响应中的Content-Encoding头来通知Web客户端</p>
+<blockquote>
+<p>Content-Encoding: gzip</p>
+</blockquote>
+<p>gzip是目前最有效，最流行的压缩方法，免费模式，并被标准化为RFC 1952.（90%使用）</p>
+<h4 id="压缩什么"><a href="#压缩什么" class="headerlink" title="压缩什么"></a>压缩什么</h4><p>很多网站会压缩HTML文档，值得压缩的内容包括脚本、样式表、XML和JSON在内的任何文本响应。图片和PDF不应该解压缩，因为已经被压缩了。再压缩<br>只会浪费CPU资源，还有可能会增加文件大小。</p>
+<p>压缩的成本：服务器会花费额外的CPU周期来完成压缩，客户端要对压缩文件进行解压缩。要检测受益是否大于开销，需要考虑响应的大小，连接的带宽和<br>客户端服务器之间的Internet距离。</p>
+<p>根据经验，通常对大于1KB或2KB的文件进行压缩。mod_gzip_minimum_file_size指令控制着希望压缩文件的最小值，默认值是500B。</p>
+<h4 id="节省"><a href="#节省" class="headerlink" title="节省"></a>节省</h4><p>压缩之后能将响应数据量减少将近70%</p>
+<h2 id="规则5-—–-将样式表放在顶部"><a href="#规则5-—–-将样式表放在顶部" class="headerlink" title="规则5 —– 将样式表放在顶部"></a>规则5 —– 将样式表放在顶部</h2><p>使用link标签将样式表放在文档head中</p>
+<h4 id="白屏"><a href="#白屏" class="headerlink" title="白屏"></a>白屏</h4><p>将样式表放在文档底部会导致在浏览器中阻止内容逐步呈现。为避免当样式变化时重绘页面中的元素，浏览器会阻塞内容逐步呈现。在浏览器和用户等待位<br>于底部的样式表时，浏览器会延迟显示任何可视化组件，这一现象称为“白屏”</p>
+<p>它只发生在Internet Explorer中，并且依赖于页面是如何加载的。当发生这种现象时，页面会完全空白，直到页面的所有内容同时涌上屏幕。</p>
+<p>白屏现象源自于浏览器的行为</p>
+<h4 id="无样式内容的闪烁（Flash-of-Unstyled-Content）"><a href="#无样式内容的闪烁（Flash-of-Unstyled-Content）" class="headerlink" title="无样式内容的闪烁（Flash of Unstyled Content）"></a>无样式内容的闪烁（Flash of Unstyled Content）</h4><p>无样式内容的闪烁简称FOUC，当样式被放在了底部，页面逐步加载时，文字首先显示，然后是图片，最后样式表被正确地下载并解析之后，已经呈现的文<br>字和图片要用新的样式重绘，这就是“无样式内容的闪烁”。</p>
+<p>白屏是对FOUC问题的弥补，浏览器可以延迟呈现，直到所有的样式表都下载完成后，这就导致了白屏，反之，浏览器可以逐步呈现，但要承担闪烁的风险。</p>
+<p>使用样式表时，页面逐步呈现会被阻止，直到所有样式表下载完成后，这就是将样式表移动文档HEAD中的原因。</p>
+<h2 id="规则6-—–-将脚本放在底部"><a href="#规则6-—–-将脚本放在底部" class="headerlink" title="规则6 —– 将脚本放在底部"></a>规则6 —– 将脚本放在底部</h2><p>在使用脚本时，在脚本以下的内容，逐步呈现都被阻塞了。将脚本放在页面越靠下的地方，意味着越多的内容能够逐步呈现</p>
+<p>脚本阻塞并行下载的原因：</p>
+<ul>
+<li>脚本可能使用doucument.write来修改页面内容，因此浏览器会等待，以确保页面能够恰当地布局；</li>
+<li>保证脚本能够按照正确的顺序执行，如果脚本之间有依赖关系，不按照执行顺序会导致JavaScript错误</li>
+</ul>
+<h2 id="规则7-—–-避免CSS表达式"><a href="#规则7-—–-避免CSS表达式" class="headerlink" title="规则7 —– 避免CSS表达式"></a>规则7 —– 避免CSS表达式</h2><p>css表达式 expression方法被其他浏览器忽略，IE支持，这种方法虽然强大但是非常危险。<br>表达式求之的频率远高于人们的期望，不仅在页面呈现和大小改变时求值，鼠标拖拽，页面滚动时候都会求值。所以要避开css表达式，用事件处理器来为特定的事件提供所期望的动态行为。</p>
+<h4 id="更新中。。。"><a href="#更新中。。。" class="headerlink" title="更新中。。。"></a>更新中。。。</h4>]]></content>
     
     <summary type="html">
     
