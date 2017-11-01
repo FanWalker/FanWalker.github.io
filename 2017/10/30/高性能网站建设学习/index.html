@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="FanWalker&#39;s blog">
 <meta property="og:description" content="这篇总结是对高性能网站建设指南书籍做出的，以巩固所学知识。书中共介绍了14条提升性能的规则，在介绍这14条规则前，书本还提到了一种法则，叫做 性能黄金法则。 性能黄金法则只有10%~20%的最终用户响应时间花在了下载html文档上，其余的80%~90%时间花在了下载页面中的所有组件上。 规则1—– 减少HTTP请求性能黄金法则中说到最终用户响应时间的80%~90%是花在HTML文档所引用的所有组件">
 <meta property="og:locale" content="中文">
-<meta property="og:updated_time" content="2017-10-31T15:07:40.683Z">
+<meta property="og:updated_time" content="2017-11-01T15:21:13.060Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="高性能网站建设指南学习总结">
 <meta name="twitter:description" content="这篇总结是对高性能网站建设指南书籍做出的，以巩固所学知识。书中共介绍了14条提升性能的规则，在介绍这14条规则前，书本还提到了一种法则，叫做 性能黄金法则。 性能黄金法则只有10%~20%的最终用户响应时间花在了下载html文档上，其余的80%~90%时间花在了下载页面中的所有组件上。 规则1—– 减少HTTP请求性能黄金法则中说到最终用户响应时间的80%~90%是花在HTML文档所引用的所有组件">
@@ -258,6 +258,23 @@
 <li>保证脚本能够按照正确的顺序执行，如果脚本之间有依赖关系，不按照执行顺序会导致JavaScript错误</li>
 </ul>
 <h2 id="规则7-—–-避免CSS表达式"><a href="#规则7-—–-避免CSS表达式" class="headerlink" title="规则7 —– 避免CSS表达式"></a>规则7 —– 避免CSS表达式</h2><p>css表达式 expression方法被其他浏览器忽略，IE支持，这种方法虽然强大但是非常危险。<br>表达式求之的频率远高于人们的期望，不仅在页面呈现和大小改变时求值，鼠标拖拽，页面滚动时候都会求值。所以要避开css表达式，用事件处理器来为特定的事件提供所期望的动态行为。</p>
+<h2 id="规则8-—–-使用外部JavaScript和CSS"><a href="#规则8-—–-使用外部JavaScript和CSS" class="headerlink" title="规则8 —– 使用外部JavaScript和CSS"></a>规则8 —– 使用外部JavaScript和CSS</h2><p>纯粹而言，内联JavaScript和CSS是比外置更快一些，因为外置的示例需要承担多个HTTP请求带来的开销。</p>
+<h4 id="页面浏览量"><a href="#页面浏览量" class="headerlink" title="页面浏览量"></a>页面浏览量</h4><p>页面浏览量越多，外置实例越有优势，因为浏览器会缓存外部文件，这样就减少了HTTP请求，反之则内联更好</p>
+<h4 id="组件重用"><a href="#组件重用" class="headerlink" title="组件重用"></a>组件重用</h4><p>如果使用相同的JavaScript和CSS，外部文件可以提高这些组件的重用率</p>
+<h2 id="减少DNS查找"><a href="#减少DNS查找" class="headerlink" title="减少DNS查找"></a>减少DNS查找</h2><p>DNS的开销：通常浏览器查找一个给定主机名的IP地址要话费20-120毫秒，在DNS查找完成前，浏览器不能从主机名那里下载到任何东西，响应时间依赖于<br>DNS解析器（通常有你的ISP提供）、它所承担的请求压力、你与它之间的距离和你的带宽速度。</p>
+<h4 id="DNS缓存和TTL"><a href="#DNS缓存和TTL" class="headerlink" title="DNS缓存和TTL"></a>DNS缓存和TTL</h4><p>DNS查找可以被你的ISP或局域网中一台特殊的缓存服务器、用户计算机缓存起来，用户请求了一个主机名后，DNS信息会留在操作系统的DNS缓存中。<br>浏览器也拥有其缓存，和操作系统的缓存分离，DNS的查找顺序是：浏览器  ——&gt;  操作系统 ——&gt; 远程服务器</p>
+<p>TTL（Time to live）：存活时间，服务器返回的DNS记录包含了一个存活时间，告诉客户端可以对该记录缓存多久</p>
+<p>在HTTP请求中使用 Connection:keep-alive 来保持持久连接，持久连接的引入使得浏览器可以在一个单独的连接上进行多个请求，从而减少DNS查找。</p>
+<h2 id="规则10-—–-精简JavaScript"><a href="#规则10-—–-精简JavaScript" class="headerlink" title="规则10 —– 精简JavaScript"></a>规则10 —– 精简JavaScript</h2><h4 id="精简"><a href="#精简" class="headerlink" title="精简"></a>精简</h4><p>从代码中减少不必要的字符包括空白字符、注释来减小js文件的大小，进而改善加载时间</p>
+<h4 id="混淆"><a href="#混淆" class="headerlink" title="混淆"></a>混淆</h4><p>混淆是可以应用在源代码上的另外一种优化方式，和精简一样，也会移除注释和空白，作为改写的一部分，函数和变量的名字将被转换为更短的字符串。</p>
+<ul>
+<li>缺陷：混淆更加复杂，混淆过程本身很有可能引入错误。</li>
+<li>维护： 由于混淆会改变js符号，因此需要对任何不能改变的符号（例如API函数）进行标记，防止混淆修改他们。</li>
+<li>调试：很难阅读，调试更加困难。</li>
+</ul>
+<p>实际经过gzip压缩之后，精简和混淆差别很小。精简脚本可以降低响应时间，但不会带来混淆的风险。</p>
+<h4 id="精简css"><a href="#精简css" class="headerlink" title="精简css"></a>精简css</h4><p>精简css带来的节省通常小于js,因为注释和空白比较少。最大的潜在节省来自于优化css——合并相同的类，移除不使用的类等。css依赖顺序的本质（成为层<br>叠样式表的原因）决定了这是一个复杂的问题。这个领域还需要进一步的研究和工具开发。</p>
+<p>通常解决方案有使用颜色缩写，用“0”代替“0px”，用“#606”代替“#660066”。</p>
 <h4 id="更新中。。。"><a href="#更新中。。。" class="headerlink" title="更新中。。。"></a>更新中。。。</h4>
       
 
