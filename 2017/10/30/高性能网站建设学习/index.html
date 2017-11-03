@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="FanWalker&#39;s blog">
 <meta property="og:description" content="这篇总结是对高性能网站建设指南书籍做出的，以巩固所学知识。书中共介绍了14条提升性能的规则，在介绍这14条规则前，书本还提到了一种法则，叫做 性能黄金法则。 性能黄金法则只有10%~20%的最终用户响应时间花在了下载html文档上，其余的80%~90%时间花在了下载页面中的所有组件上。 规则1—– 减少HTTP请求性能黄金法则中说到最终用户响应时间的80%~90%是花在HTML文档所引用的所有组件">
 <meta property="og:locale" content="中文">
-<meta property="og:updated_time" content="2017-11-01T15:21:13.060Z">
+<meta property="og:updated_time" content="2017-11-03T02:52:45.269Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="高性能网站建设指南学习总结">
 <meta name="twitter:description" content="这篇总结是对高性能网站建设指南书籍做出的，以巩固所学知识。书中共介绍了14条提升性能的规则，在介绍这14条规则前，书本还提到了一种法则，叫做 性能黄金法则。 性能黄金法则只有10%~20%的最终用户响应时间花在了下载html文档上，其余的80%~90%时间花在了下载页面中的所有组件上。 规则1—– 减少HTTP请求性能黄金法则中说到最终用户响应时间的80%~90%是花在HTML文档所引用的所有组件">
@@ -275,7 +275,56 @@
 <p>实际经过gzip压缩之后，精简和混淆差别很小。精简脚本可以降低响应时间，但不会带来混淆的风险。</p>
 <h4 id="精简css"><a href="#精简css" class="headerlink" title="精简css"></a>精简css</h4><p>精简css带来的节省通常小于js,因为注释和空白比较少。最大的潜在节省来自于优化css——合并相同的类，移除不使用的类等。css依赖顺序的本质（成为层<br>叠样式表的原因）决定了这是一个复杂的问题。这个领域还需要进一步的研究和工具开发。</p>
 <p>通常解决方案有使用颜色缩写，用“0”代替“0px”，用“#606”代替“#660066”。</p>
-<h4 id="更新中。。。"><a href="#更新中。。。" class="headerlink" title="更新中。。。"></a>更新中。。。</h4>
+<h2 id="规则11-—–-避免重定向"><a href="#规则11-—–-避免重定向" class="headerlink" title="规则11 —– 避免重定向"></a>规则11 —– 避免重定向</h2><p>重定向用于将用户从一个URL重新路由到另一个URL，最常见的重定向为301和302，html文档、图片、脚本、样式表等都可以进行重定向，重定向会使你的<br>页面变慢。</p>
+<p>重定向原因：</p>
+<ul>
+<li>网站重新设计</li>
+<li>跟踪流量</li>
+<li>记录广告点击</li>
+<li>建立易于记忆的URL</li>
+</ul>
+<h4 id="重定向类型"><a href="#重定向类型" class="headerlink" title="重定向类型"></a>重定向类型</h4><p>web服务器向浏览器返回一个重定向时，响应中会有一个范围在3xx的状态码。</p>
+<p>document.location可以设置期望的url实现重定向，还有meta refresh标签可以在content属性所指定的描述之后重定向用户-</p>
+<pre><code>&lt;meta http-equiv=&quot;refresh&quot; content=&quot;0&quot;;url=http://stevesouders.com/newuri&quot;&gt;
+</code></pre><h4 id="重定向如何损伤性能"><a href="#重定向如何损伤性能" class="headerlink" title="重定向如何损伤性能"></a>重定向如何损伤性能</h4><p>重定向延迟了整个HTML文档的传输，在HTML文档到达之前，页面中不会呈现出任何东西，也没有任何组件会被下载。</p>
+<h4 id="重定向之外的其他选择"><a href="#重定向之外的其他选择" class="headerlink" title="重定向之外的其他选择"></a>重定向之外的其他选择</h4><ol>
+<li>缺少结尾的斜线/：这是最为浪费和频繁的，也是web开发人员没注意的。没有/时会导致301响应，这是很多web服务器的默认行为，所以很简单，url后面加一个/</li>
+<li>跟踪内部流量：分析离开网页首页之后的流量去向。使用referer。难处在于只能分析内部，自己公司的，如果目标网站属于其他公司则不可能分析referer日志了。</li>
+<li>跟踪出站流量：用信标（beacon）——一个hppt请求，其URL中包含有跟踪信息。跟踪信息可以从信标web服务器的访问日志中提取出来。</li>
+</ol>
+<h2 id="规则12-—–-删除重复的脚本"><a href="#规则12-—–-删除重复的脚本" class="headerlink" title="规则12 —– 删除重复的脚本"></a>规则12 —– 删除重复的脚本</h2><p>来自不同团队的很多人都要向页面中添加HTML，有可能相同的脚本会被添加两次。</p>
+<h4 id="重复脚本危害"><a href="#重复脚本危害" class="headerlink" title="重复脚本危害"></a>重复脚本危害</h4><p>不必要的HTTP请求和执行JavaScript所浪费的时间。</p>
+<h2 id="规则13-—–-配置ETag"><a href="#规则13-—–-配置ETag" class="headerlink" title="规则13 —– 配置ETag"></a>规则13 —– 配置ETag</h2><p>ETag（Entity Tag）是Web服务器和浏览器用于确认缓存组件有效性的一种机制。ETag是一个字符串，它唯一标识了一个组件的特定版本。</p>
+<p>原始服务器使用ETag响应头来指定组件的ETag，第一次请求：</p>
+<pre><code>//请求：
+GET /i/xx.jpg HTTP 1.1
+HOST www.xxx.com
+//响应：
+HTTP 1.1 20 OK
+Last-Modified:true .12 dec 2015 03:03:09 GMT
+ETag:&quot;10c34ba-8ba-abds3b3&quot;
+Content-Length:1024
+</code></pre><p>第二次请求，验证组件是否有效，会使用If-None-Match头将ETag传回原始服务器。</p>
+<pre><code>//请求：
+GET /i/xx.jpg HTTP 1.1
+HOST www.xxx.com
+If-Modified-Since:True,12 dec 2015 03:03:09 GMT
+If-None-Match:&quot;10c34ba-8ba-abds3b3&quot;
+//响应：
+HTTP 1.1 304 not modifed
+</code></pre><h4 id="ETag带来的问题"><a href="#ETag带来的问题" class="headerlink" title="ETag带来的问题"></a>ETag带来的问题</h4><p>对于使用服务器集群来处理请求的网站，匹配次数会大大降低。此时etag就降低了缓存效率，导致了不必要的请求。If-None-Match的优先级比If-Modified-Since的优先级更高。</p>
+<h4 id="ETag的使用"><a href="#ETag的使用" class="headerlink" title="ETag的使用"></a>ETag的使用</h4><p>一种选择对ETag进行配置，以利用其灵活的验证能力，可以使用php等脚本语言配置ETag头。</p>
+<p>如果你的组件必须通过最新修改日期之外的一些东西来验证，使用ETag。</p>
+<p>你还可以将ETag头安全移除在apache配置文件中，减少它的坏处。<br>从ETag中移除ChangeNumber或者完全移除ETag可以避免当数据已经位于浏览器缓存中时进行不必要的和低效的下载。</p>
+<h2 id="规则14-—–-使Ajax可缓存"><a href="#规则14-—–-使Ajax可缓存" class="headerlink" title="规则14 —– 使Ajax可缓存"></a>规则14 —– 使Ajax可缓存</h2><blockquote>
+<p>被动Ajax请求：是为了将来使用而预先发起的。</p>
+<p>主动Ajax请求：基于用户当前的操作而引起的。</p>
+</blockquote>
+<p>主动请求对用户体验的影响更大，改善这些主动Ajax请求最重要的方式就是使响应可缓存。</p>
+<p>使用一个长久的Expires头，将响应的个性化和动态本质反映到缓存中（可供采用的最好方式是使用查询字符串参数）</p>
+<p>有的响应中因为数据隐私原因而不能缓存，当数据被认为是私有的时候，大多会在响应中使用 <code>Cache-Control:no-store</code>。<br>处理数据隐私的更好方法是使用安全通信协议如安全套接字层（Secure Socket Layer,SSL）。SSL响应式可以缓存的。</p>
+<p><strong>到此高性能建站建设学习指南14大规则基本总结完</strong></p>
+
       
 
       
