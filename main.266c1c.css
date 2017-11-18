@@ -2588,6 +2588,11 @@ pre .css~* .id,pre .id {
     width: 40px;
     text-align: center
 }
+.mod-side-category{
+    position: fixed;
+    right: 40px;
+    top: 50%;
+}
 
 .jump-container:hover .icon-back {
     background: rgba(36,193,246,.9)
@@ -2597,7 +2602,7 @@ pre .css~* .id,pre .id {
     position: relative;
     cursor: pointer;
     width: 40px;
-    height: 40px;
+    height: 50px;
     opacity: .8
 }
 

@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://fanwalker.com/"/>
-  <updated>2017-11-03T02:52:45.269Z</updated>
+  <updated>2017-11-18T07:42:23.416Z</updated>
   <id>http://fanwalker.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://fanwalker.com/2017/10/30/%E9%AB%98%E6%80%A7%E8%83%BD%E7%BD%91%E7%AB%99%E5%BB%BA%E8%AE%BE%E5%AD%A6%E4%B9%A0/"/>
     <id>http://fanwalker.com/2017/10/30/高性能网站建设学习/</id>
     <published>2017-10-30T12:08:36.000Z</published>
-    <updated>2017-11-03T02:52:45.269Z</updated>
+    <updated>2017-11-18T07:42:23.416Z</updated>
     
     <content type="html"><![CDATA[<p>这篇总结是对高性能网站建设指南书籍做出的，以巩固所学知识。书中共介绍了14条提升性能的规则，在介绍这14条规则前，书本还提到了一种法则，叫做</p>
 <p>性能黄金法则。</p>
@@ -206,7 +206,7 @@ HTTP 1.1 304 not modifed
     <link href="http://fanwalker.com/2017/10/21/JavaScript%E4%B9%8B%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
     <id>http://fanwalker.com/2017/10/21/JavaScript之正则表达式/</id>
     <published>2017-10-21T14:33:11.000Z</published>
-    <updated>2017-10-22T13:12:40.835Z</updated>
+    <updated>2017-11-18T08:19:52.336Z</updated>
     
     <content type="html"><![CDATA[<p>正则表达式（英语：Regular Expression，在代码中常简写为regex、regexp或RE）使用单个字符串来描述、匹配一系列符合某个句法规则的字符串搜索模式。</p>
 <h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><pre><code>/正则表达式主体/修饰符(可选)
@@ -415,7 +415,7 @@ Email：^\w+@[a-z0-9]+(\.[a-z]+){1,3}$
     <link href="http://fanwalker.com/2017/09/20/%E8%87%AA%E9%80%82%E5%BA%94%E7%BD%91%E9%A1%B5%E8%AE%BE%E8%AE%A1/"/>
     <id>http://fanwalker.com/2017/09/20/自适应网页设计/</id>
     <published>2017-09-20T13:24:59.000Z</published>
-    <updated>2017-09-20T15:49:05.807Z</updated>
+    <updated>2017-11-18T08:21:38.974Z</updated>
     
     <content type="html"><![CDATA[<p>自适应网页设计：让同一张网页自动适应不同大小的屏幕，根据屏幕宽度，自动调整布局的设计。</p>
 <h2 id="一、viewport元标签"><a href="#一、viewport元标签" class="headerlink" title="一、viewport元标签"></a>一、viewport元标签</h2><p>在网页代码的头部，加入一行viewport元标签。</p>
@@ -565,7 +565,7 @@ height:1080px;
     <link href="http://fanwalker.com/2017/09/10/%E6%B5%85%E8%B0%88CORS%E8%B7%A8%E5%9F%9F%E8%B5%84%E6%BA%90%E5%85%B1%E4%BA%AB/"/>
     <id>http://fanwalker.com/2017/09/10/浅谈CORS跨域资源共享/</id>
     <published>2017-09-10T14:30:18.000Z</published>
-    <updated>2017-09-10T14:36:09.952Z</updated>
+    <updated>2017-11-18T08:21:34.706Z</updated>
     
     <content type="html"><![CDATA[<p><strong>AJAX(Asynchronous JavaScript And Xml) 是JavaScript执行异步网络请求</strong></p>
 <p>用户点击“Submit”按钮，表单开始提交，浏览器就会刷新页面，web的运作原理：一次HTTP请求对应一个页面<br>要让用户留在当前页面，同时发送请求，要用JavaScript实现，接收到数据后，再用JavaScript更新页面</p>
@@ -679,7 +679,7 @@ var xhr = new XMLHttpRequest();  //创建XMLHttpRequest对象
     <link href="http://fanwalker.com/2017/08/30/JavaScript%E4%B9%8B%E5%91%BD%E5%90%8D%E5%87%BD%E6%95%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
     <id>http://fanwalker.com/2017/08/30/JavaScript之命名函数表达式/</id>
     <published>2017-08-30T12:03:03.000Z</published>
-    <updated>2017-09-09T15:00:25.742Z</updated>
+    <updated>2017-11-18T08:20:52.249Z</updated>
     
     <content type="html"><![CDATA[<p>所谓命名函数表达式就是被赋予了名字的函数表达式，和它相对的是匿名函数，从简单的角度来看，命名函数表达式可以在调试器或性能分析程序中描述函</p>
 <p>数的名称，在调试过程中有着不小的作用，因为通常在跨浏览器开发中都会出现一些小毛病，命名函数表达式可以帮助我们解决它们。</p>
@@ -935,7 +935,7 @@ expr_test.html()
     <link href="http://fanwalker.com/2017/08/25/JavaScript%E4%B9%8B%E5%8E%9F%E5%9E%8B%E5%92%8C%E5%8E%9F%E5%9E%8B%E9%93%BE/"/>
     <id>http://fanwalker.com/2017/08/25/JavaScript之原型和原型链/</id>
     <published>2017-08-25T13:23:51.000Z</published>
-    <updated>2017-09-09T15:00:25.731Z</updated>
+    <updated>2017-11-18T08:20:55.725Z</updated>
     
     <content type="html"><![CDATA[<p>JavaScript不包含传统的类继承模型，使用的是prototypal模型即原型模型，虽然这经常被当作是 JavaScript 的缺点被提及，其实基于原型的继承模型比传统</p>
 <p>的类继承还要强大。实现传统的类继承模型是很简单，但是实现 JavaScript 中的原型继承则要困难的多。</p>
@@ -1161,7 +1161,7 @@ for(var i in foo) {
     <link href="http://fanwalker.com/2017/08/22/JavaScript%E4%B8%AD%E7%9A%84this/"/>
     <id>http://fanwalker.com/2017/08/22/JavaScript中的this/</id>
     <published>2017-08-22T07:04:08.000Z</published>
-    <updated>2017-09-09T15:00:25.721Z</updated>
+    <updated>2017-11-18T08:21:08.388Z</updated>
     
     <content type="html"><![CDATA[<p>原文出自：<a href="https://segmentfault.com/a/1190000002640298#articleHeader3" target="_blank" rel="external">JavaScript中的this陷阱的最全收集–没有之一</a></p>
 <p>个人觉得，如果需要掌握一门语言，掌握它的API只是学了皮毛，理解这门语言的精髓才是重点，提及JavaScript的精髓，<strong>this</strong>、<strong>闭包</strong>、<strong>作用域链</strong>、<strong>函数</strong>是当之无愧的。</p>
@@ -1751,7 +1751,7 @@ thing.logThings([&quot;apples&quot;, &quot;oranges&quot;, &quot;strawberries&quo
     <link href="http://fanwalker.com/2017/08/20/websocket%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E8%81%8A%E5%A4%A9%E7%A8%8B%E5%BA%8F/"/>
     <id>http://fanwalker.com/2017/08/20/websocket实现简单聊天程序/</id>
     <published>2017-08-20T09:06:17.000Z</published>
-    <updated>2017-09-09T15:00:25.759Z</updated>
+    <updated>2017-11-18T08:21:16.174Z</updated>
     
     <content type="html"><![CDATA[<p>程序的流程图：<br><a id="more"></a></p>
 <p><img src="http://i.imgur.com/xNJdw2f.png" alt=""></p>
@@ -1877,7 +1877,7 @@ var socket = io.connect(socket_url);
     <link href="http://fanwalker.com/2017/08/15/CSS3-3D-transform%E5%8F%98%E6%8D%A2/"/>
     <id>http://fanwalker.com/2017/08/15/CSS3-3D-transform变换/</id>
     <published>2017-08-15T05:34:29.000Z</published>
-    <updated>2017-09-09T15:00:25.672Z</updated>
+    <updated>2017-11-18T08:19:55.424Z</updated>
     
     <content type="html"><![CDATA[<p> 在学习慕课网H5+JS+CSS3实现圣诞情缘的时候遇到css3的3D转换，虽然也学习过css3的3d变化教程，但都是基于理论上，没有自己亲自应用过，所以现在使用的时候就有点吃力。今天就重新学习了一遍css3的3D变换。</p>
 <h3 id="一、rotateX-rotateY-rotateZ"><a href="#一、rotateX-rotateY-rotateZ" class="headerlink" title="一、rotateX, rotateY, rotateZ"></a>一、rotateX, rotateY, rotateZ</h3><p>先介绍rotateX(), rotateY(), rotateZ()这三个方法，在介绍这三个方法之前我们先来一张图：</p>
@@ -1949,7 +1949,7 @@ perspective:300px;
     <link href="http://fanwalker.com/2017/08/13/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%90%86%E8%A7%A3/"/>
     <id>http://fanwalker.com/2017/08/13/观察者模式的理解/</id>
     <published>2017-08-13T13:23:27.000Z</published>
-    <updated>2017-09-09T15:00:25.770Z</updated>
+    <updated>2017-11-18T08:21:30.179Z</updated>
     
     <content type="html"><![CDATA[<p>在学习H5+JS+CSS3实现动画的时候接触到JavaScript设计模式之一的观察者模式，就顺便查了网上的资料，不过看了网上的一些资料，对观察者模式的应用还是有些懵懵懂懂，只是了解到观察者模式所做的工作就是在解耦，让耦合的双方都依赖于抽象，而不是依赖于具体。从而使得各自的变化都不会影响到另一边的变化。比如浏览器的事件也是观察者模式：</p>
 <pre><code>div.onclick = function click(){
@@ -2237,7 +2237,7 @@ $.unsubscribe(&quot;/some/topic&quot;);
     <link href="http://fanwalker.com/2017/08/12/nodejs%E7%88%AC%E8%99%AB%E5%AD%A6%E4%B9%A0/"/>
     <id>http://fanwalker.com/2017/08/12/nodejs爬虫学习/</id>
     <published>2017-08-12T00:08:21.000Z</published>
-    <updated>2017-09-09T15:00:25.750Z</updated>
+    <updated>2017-11-18T08:21:12.356Z</updated>
     
     <content type="html"><![CDATA[<p>这篇文章主要是记录在学习nodejs爬虫时学到的知识。学习过程主要是参照了这篇文章：<br><a href="https://github.com/chokcoco/cnblogsArticle/issues/7" title="【nodeJS爬虫】前端爬虫系列 -- 小爬「博客园」" target="_blank" rel="external">https://github.com/chokcoco/cnblogsArticle/issues/7</a>，文章中对爬虫讲的很详细，对想要学习爬虫的同学会有帮助。</p>
 <h3 id="一、superagent"><a href="#一、superagent" class="headerlink" title="一、superagent"></a>一、superagent</h3><p>superagent是一款极好用的轻量级的更为优化的ajax API同时是nodejs模块，它专注于处理服务端/客户端的http请求，让你处理get,post,put,delete,head请求时更轻松。虽然有内置的http等模块进行请求的处理，但superagent更简单。来看看它们之间的对比：<br><a id="more"></a><br>    var request = require(‘superagent’);<br>    var http = require(‘http’);<br>    var queryString = require(‘queryString’);</p>
@@ -2413,7 +2413,7 @@ http.createServer(function(request, response) {
     <link href="http://fanwalker.com/2017/08/10/DOM%E5%AD%A6%E4%B9%A0/"/>
     <id>http://fanwalker.com/2017/08/10/DOM学习/</id>
     <published>2017-08-10T04:46:45.000Z</published>
-    <updated>2017-09-09T15:00:25.683Z</updated>
+    <updated>2017-11-18T08:20:48.044Z</updated>
     
     <content type="html"><![CDATA[<h3 id="一、节点层次"><a href="#一、节点层次" class="headerlink" title="一、节点层次"></a>一、节点层次</h3><p> &nbsp;&nbsp;&nbsp;节点分为几种不同的类型，每种类型分别表示文档中不同的信息及标记,节点之间的关系构成了层次，文档节点是每个文档的根节点。节点之间的关系：<br><img src="http://i.imgur.com/2wKDqZc.png" alt=""></p>
 <a id="more"></a>
